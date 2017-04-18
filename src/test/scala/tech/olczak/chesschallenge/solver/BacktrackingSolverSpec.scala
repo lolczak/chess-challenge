@@ -7,9 +7,9 @@ import org.scalatest.prop.GeneratorDrivenPropertyChecks
 
 class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
-  "A backtracking solver" should "not find a solution when there is no pieces" in {
+  "A backtracking solver" should "not find a solution when there is no pieces" in  new TestContext {
     //when
-    val solutions = BacktrackingSolver.solve(BoardDimension(3, 3), List.empty)
+    val solutions = objectUnderTest.solve(BoardDimension(3, 3), List.empty)
     //then
     solutions shouldBe empty
   }
@@ -17,13 +17,15 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
   it should "find as many solutions as there is squares on the board when one piece is provided" in new TestContext {
     forAll(boardGen) { case dimension @ BoardDimension(rankCount, fileCount) =>
       //when
-      val solutions = BacktrackingSolver.solve(dimension, List(Queen -> 1))
+      val solutions = objectUnderTest.solve(dimension, List(Queen -> 1))
       //then
       solutions should contain theSameElementsAs genAllSquares(dimension).map(s => Arrangement(dimension, List(PiecePosition(Queen, s))))
     }
   }
 
   trait TestContext {
+
+    val objectUnderTest = BacktrackingSolver
 
     val boardGen =
       for {
