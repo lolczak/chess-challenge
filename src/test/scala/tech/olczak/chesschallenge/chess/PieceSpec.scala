@@ -18,6 +18,17 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     }
   }
 
+  "A rook" should "threaten any number of squares along any rank or file" in new TestContext {
+    forAll(squareGen) { current =>
+      //given
+      val threatenedSquares = SampleBoard.allSquares filter { case Square(rank, file) => current.rank == rank || current.file == file }
+      val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
+      //then
+      forEvery(threatenedSquares) { square => assert(Rook.isThreatened(current)(square)) }
+      forEvery(safeSquares) { square => assert(!Rook.isThreatened(current)(square)) }
+    }
+  }
+
   trait TestContext {
 
     val SampleBoard = Board(10, 10)
