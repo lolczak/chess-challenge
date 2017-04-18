@@ -19,8 +19,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
       //when
       val solutions = BacktrackingSolver.solve(d, List(Queen -> 1))
       //then
-      solutions should have size fileCount * rankCount
-      solutions should contain theSameElementsAs (for (rank <- 0 until rankCount; file <- 0 until fileCount) yield Arrangement(d, List(PiecePosition(Queen, Square(rank, file)))))
+      solutions should contain theSameElementsAs genAllSquares(d).map(s => Arrangement(d, List(PiecePosition(Queen, s))))
     }
   }
 
@@ -32,6 +31,8 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
         fileCount <- Gen.choose(1, 10)
       } yield BoardDimension(rankCount, fileCount)
 
+    def genAllSquares(dimension: BoardDimension) =
+      for (rank <- 0 until dimension.rankCount; file <- 0 until dimension.fileCount) yield Square(rank, file)
 
   }
 
