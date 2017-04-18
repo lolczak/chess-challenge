@@ -8,13 +8,8 @@ object BacktrackingSolver extends ChessChallengeSolver {
     if (pieces.isEmpty) List.empty
     else {
       val (piece, count) = pieces.head
-      val allSquares =
-        for {
-          rank <- 0 until board.rankCount
-          file <- 0 until board.fileCount
-        } yield Square(rank, file)
 
-      allSquares.map(square => Arrangement(board, List(PiecePosition(piece, square)))).toList
+      board.allSquares.map(square => Arrangement(board, List(PiecePosition(piece, square))))
     }
   }
 
