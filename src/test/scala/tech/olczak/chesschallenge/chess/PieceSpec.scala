@@ -29,14 +29,26 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     }
   }
 
+  "A knight" should "threaten two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
+    forAll(squareGen) { occupied =>
+      //given
+      val moves = List((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, -2), (-1, 2))
+      val threatenedSquares = moves map { case (x, y) => Square(occupied.rank + x, occupied.file + y) }
+      val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
+      //then
+      forEvery(threatenedSquares) { square => assert(Knight.isThreatened(occupied)(square)) }
+      forEvery(safeSquares) { square => assert(!Knight.isThreatened(occupied)(square)) }
+    }
+  }
+
   trait TestContext {
 
     val SampleBoard = Board(10, 10)
 
     val squareGen =
       for {
-        rank <- Gen.choose(1, 10)
-        file <- Gen.choose(1, 10)
+        rank <- Gen.choose(0, 9)
+        file <- Gen.choose(0, 9)
       } yield Square(rank, file)
 
   }
