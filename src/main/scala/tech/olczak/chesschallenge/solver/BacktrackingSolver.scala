@@ -4,7 +4,7 @@ import tech.olczak.chesschallenge.chess._
 
 object BacktrackingSolver extends ChessChallengeSolver {
 
-  override def solve(board: BoardDimension, pieces: List[(Piece, Int)]): List[Arrangement] = {
+  override def solve(board: Board, pieces: List[(Piece, Int)]): List[Arrangement] = {
     if (pieces.isEmpty) List.empty
     else {
       val (piece, count) = pieces.head
