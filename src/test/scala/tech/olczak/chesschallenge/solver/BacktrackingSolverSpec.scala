@@ -1,13 +1,13 @@
 package tech.olczak.chesschallenge.solver
 
-import org.scalatest.{Matchers, FlatSpec}
 import org.scalacheck.Gen
-import tech.olczak.chesschallenge.chess._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
+import org.scalatest.{FlatSpec, Matchers}
+import tech.olczak.chesschallenge.chess._
 
 class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
-  "A backtracking solver" should "not find a solution when there is no pieces" in  new TestContext {
+  "A backtracking solver" should "not find a solution when there is no pieces" in new TestContext {
     //when
     val solutions = objectUnderTest.solve(Board(3, 3), List.empty)
     //then
@@ -15,7 +15,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
   }
 
   it should "find as many solutions as there is squares on the board when one piece is provided" in new TestContext {
-    forAll(boardGen) { case board @ Board(rankCount, fileCount) =>
+    forAll(boardGen) { case board@Board(rankCount, fileCount) =>
       //when
       val solutions = objectUnderTest.solve(board, List(Queen -> 1))
       //then

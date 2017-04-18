@@ -1,6 +1,6 @@
 package tech.olczak.chesschallenge.solver
 
-import tech.olczak.chesschallenge.chess.{Arrangement, Piece, Board}
+import tech.olczak.chesschallenge.chess.{Arrangement, Board, Piece}
 
 trait ChessChallengeSolver {
 
