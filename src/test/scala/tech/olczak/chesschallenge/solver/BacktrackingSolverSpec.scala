@@ -15,11 +15,11 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
   }
 
   it should "find as many solutions as there is squares on the board when one piece is provided" in new TestContext {
-    forAll(boardGen) { case d@BoardDimension(rankCount, fileCount) =>
+    forAll(boardGen) { case dimension @ BoardDimension(rankCount, fileCount) =>
       //when
-      val solutions = BacktrackingSolver.solve(d, List(Queen -> 1))
+      val solutions = BacktrackingSolver.solve(dimension, List(Queen -> 1))
       //then
-      solutions should contain theSameElementsAs genAllSquares(d).map(s => Arrangement(d, List(PiecePosition(Queen, s))))
+      solutions should contain theSameElementsAs genAllSquares(dimension).map(s => Arrangement(dimension, List(PiecePosition(Queen, s))))
     }
   }
 
