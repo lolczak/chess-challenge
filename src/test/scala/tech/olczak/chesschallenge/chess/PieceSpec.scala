@@ -15,7 +15,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   }
 
   "A rook" should "move any number of squares along any rank or file" in new TestContext {
-    testPieceMoves(Rook, rankForwardMoves, rankBackwardMoves, fileForwardMoves, fileBackwardMoves)
+    testPieceMoves(Rook, RankForwardMoves, RankBackwardMoves, FileForwardMoves, FileBackwardMoves)
   }
 
   "A knight" should "move two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
@@ -24,7 +24,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   }
 
   "A bishop" should "move any number of squares diagonally" in new TestContext {
-    testPieceMoves(Bishop, diagonalRfFfMoves, diagonalRfFbMoves, diagonalRbFfMoves, diagonalRbFbMoves)
+    testPieceMoves(Bishop, DiagonalRfFfMoves, DiagonalRfFbMoves, DiagonalRbFfMoves, DiagonalRbFbMoves)
   }
 
   trait TestContext {
@@ -56,15 +56,15 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     def isOnBoard(square: Square) =
       square.rank >= 0 && square.rank < TestBoard.rankCount && square.file >= 0 && square.file < TestBoard.fileCount
 
-    val diagonalRfFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col + 1) }
-    val diagonalRfFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col - 1) }
-    val diagonalRbFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col + 1) }
-    val diagonalRbFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col - 1) }
+    val DiagonalRfFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col + 1) }
+    val DiagonalRfFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col - 1) }
+    val DiagonalRbFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col + 1) }
+    val DiagonalRbFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col - 1) }
 
-    val rankForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col) }
-    val rankBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col) }
-    val fileForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col + 1) }
-    val fileBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col - 1) }
+    val RankForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col) }
+    val RankBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col) }
+    val FileForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col + 1) }
+    val FileBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col - 1) }
 
   }
 
