@@ -15,14 +15,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   }
 
   "A rook" should "move any number of squares along any rank or file" in new TestContext {
-    forAll(squareGen) { occupied =>
-      //given
-      val threatenedSquares = TestBoard.allSquares filter { case Square(rank, file) => occupied.rank == rank || occupied.file == file }
-      val safeSquares = TestBoard.allSquares.diff(threatenedSquares)
-      //then
-      forEvery(threatenedSquares) { square => assert(Rook.isThreatened(occupied)(square)) }
-      forEvery(safeSquares) { square => assert(!Rook.isThreatened(occupied)(square)) }
-    }
+    testPieceMoves(Rook, rankForwardMoves, rankBackwardMoves, fileForwardMoves, fileBackwardMoves)
   }
 
   "A knight" should "move two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
@@ -69,7 +62,10 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     val diagonalRbFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col + 1) }
     val diagonalRbFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col - 1) }
 
-
+    val rankForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col) }
+    val rankBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col) }
+    val fileForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col + 1) }
+    val fileBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col - 1) }
 
   }
 
