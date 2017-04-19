@@ -13,8 +13,8 @@ object BacktrackingSolver extends ChessChallengeSolver {
         .flatMap(_.permutations.toList)
         .map(_.zip(pieces))
         .map(_.map { case (s, p) => PiecePosition(p, s)})
-        .filter(positions => positions.combinations(2).forall { case List(p1, p2) => !p1.piece.isThreatened(p1.square)(p2.square) &&  !p2.piece.isThreatened(p2.square)(p1.square)} )
         .map(p => Chessboard(board, p.toSet))
+        .filter(_.isSafe)
         .toSet
         .toList
     }
