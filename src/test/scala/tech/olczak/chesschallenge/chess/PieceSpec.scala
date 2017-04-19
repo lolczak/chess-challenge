@@ -27,6 +27,11 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     testPieceMoves(Bishop, DiagonalRfFfMoves, DiagonalRfFbMoves, DiagonalRbFfMoves, DiagonalRbFbMoves)
   }
 
+  "A queen" should "move any number of squares along rank, file, or diagonal" in new TestContext {
+    testPieceMoves(Queen, DiagonalRfFfMoves, DiagonalRfFbMoves, DiagonalRbFfMoves, DiagonalRbFbMoves, RankForwardMoves,
+      RankBackwardMoves, FileForwardMoves, FileBackwardMoves)
+  }
+
   trait TestContext {
 
     val TestBoard = Board(10, 10)

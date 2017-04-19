@@ -8,7 +8,9 @@ trait Piece {
 
 case object Queen extends Piece {
 
-  override def isThreatened(occupied: Square)(tested: Square): Boolean = ???
+  override def isThreatened(occupied: Square)(tested: Square): Boolean =
+    occupied.rank == tested.rank || occupied.file == tested.file ||
+      Math.abs(occupied.rank - tested.rank) == Math.abs(occupied.file - tested.file)
 
 }
 
