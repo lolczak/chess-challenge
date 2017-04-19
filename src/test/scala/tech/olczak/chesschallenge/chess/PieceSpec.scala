@@ -24,8 +24,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   }
 
   "A bishop" should "move any number of squares diagonally" in new TestContext {
-    val BishopMoves = Seq(diagonalRfFfMoves, diagonalRfFbMoves, diagonalRbFfMoves, diagonalRbFbMoves)
-    testPieceMoves(Bishop, BishopMoves: _*)
+    testPieceMoves(Bishop, diagonalRfFfMoves, diagonalRfFbMoves, diagonalRbFfMoves, diagonalRbFbMoves)
   }
 
   trait TestContext {
