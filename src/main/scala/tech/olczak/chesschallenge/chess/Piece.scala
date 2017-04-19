@@ -33,3 +33,11 @@ case object Knight extends Piece {
       (Math.abs(occupied.rank - tested.rank) == 1 && Math.abs(occupied.file - tested.file) == 2)
 
 }
+
+
+case object Bishop extends Piece {
+
+  override def isThreatened(occupied: Square)(tested: Square): Boolean =
+    Math.abs(occupied.rank - tested.rank) == Math.abs(occupied.file - tested.file)
+
+}

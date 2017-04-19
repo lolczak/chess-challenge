@@ -10,8 +10,7 @@ import scala.language.postfixOps
 class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
   "A king" should "move one square in any direction" in new TestContext {
-    //given
-    val KingMoves = for (x <- -1 to 1; y <- -1 to 1) yield (x, y)
+    val KingMoves = (for (x <- -1 to 1; y <- -1 to 1) yield (x, y)).toList
     testPieceMoves(King, KingMoves)
   }
 
@@ -31,6 +30,11 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     testPieceMoves(Knight, KnightMoves)
   }
 
+  "A bishop" should "move any number of squares diagonally" in new TestContext {
+    val BishopMoves = Seq(diagonalRfFfMoves, diagonalRfFbMoves, diagonalRbFfMoves, diagonalRbFbMoves)
+    testPieceMoves(Bishop, BishopMoves: _*)
+  }
+
   trait TestContext {
 
     val TestBoard = Board(10, 10)
@@ -41,16 +45,32 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
         file <- Gen.choose(0, 9)
       } yield Square(rank, file)
 
-    def testPieceMoves(piece: Piece, moves: Seq[(Int, Int)]) = {
+    def testPieceMoves(piece: Piece, moves: List[(Int, Int)]): Unit = {
+      val stream = moves.map(Stream(_))
+      testPieceMoves(piece, stream: _*)
+    }
+
+    def testPieceMoves(piece: Piece, moveStreams: Stream[(Int, Int)]*): Unit = {
       forAll(squareGen) { occupied =>
         //given
-        val threatenedSquares = moves map { case (x, y) => Square(occupied.rank + x, occupied.file + y) }
+        val threatenedSquares = moveStreams.flatMap(stream => stream map { case (x, y) => Square(occupied.rank + x, occupied.file + y) } takeWhile isOnBoard toSeq)
         val safeSquares = TestBoard.allSquares.diff(threatenedSquares)
         //then
         forEvery(threatenedSquares) { square => assert(piece.isThreatened(occupied)(square)) }
         forEvery(safeSquares) { square => assert(!piece.isThreatened(occupied)(square)) }
       }
     }
+
+    def isOnBoard(square: Square) =
+      square.rank >= 0 && square.rank < TestBoard.rankCount && square.file >= 0 && square.file < TestBoard.fileCount
+
+    val diagonalRfFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col + 1) }
+    val diagonalRfFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col - 1) }
+    val diagonalRbFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col + 1) }
+    val diagonalRbFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col - 1) }
+
+
+
   }
 
 }
