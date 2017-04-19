@@ -21,7 +21,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
       //when
       val solutions = objectUnderTest.solve(board, List(Queen -> 1))
       //then
-      solutions should contain theSameElementsAs genAllSquares(board).map(s => Arrangement(board, Set(PiecePosition(Queen, s))))
+      solutions should contain theSameElementsAs genAllSquares(board).map(s => Chessboard(board, Set(PiecePosition(Queen, s))))
     }
   }
 
@@ -51,10 +51,10 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
 
     val RealWorldProblems = Gen oneOf Seq(
       (Board(3, 3), List(King -> 2, Rook -> 1), List(
-        Arrangement(Board(3, 3), Set(King ->(0, 0), King ->(0, 2), Rook ->(2, 1))),
-        Arrangement(Board(3, 3), Set(King ->(0, 0), Rook ->(1, 2), King ->(2, 0))),
-        Arrangement(Board(3, 3), Set(King ->(0, 2), Rook ->(1, 0), King ->(2, 2))),
-        Arrangement(Board(3, 3), Set(Rook ->(0, 1), King ->(2, 0), King ->(2, 2)))
+        Chessboard(Board(3, 3), Set(King ->(0, 0), King ->(0, 2), Rook ->(2, 1))),
+        Chessboard(Board(3, 3), Set(King ->(0, 0), Rook ->(1, 2), King ->(2, 0))),
+        Chessboard(Board(3, 3), Set(King ->(0, 2), Rook ->(1, 0), King ->(2, 2))),
+        Chessboard(Board(3, 3), Set(Rook ->(0, 1), King ->(2, 0), King ->(2, 2)))
       ))
     )
 
