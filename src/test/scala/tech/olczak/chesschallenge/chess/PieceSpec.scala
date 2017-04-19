@@ -9,13 +9,13 @@ import scala.language.postfixOps
 
 class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
-  "A king" should "threaten one square in any direction" in new TestContext {
+  "A king" should "move one square in any direction" in new TestContext {
     //given
     val KingMoves = for (x <- -1 to 1; y <- -1 to 1) yield (x, y)
     testPieceMoves(King, KingMoves)
   }
 
-  "A rook" should "threaten any number of squares along any rank or file" in new TestContext {
+  "A rook" should "move any number of squares along any rank or file" in new TestContext {
     forAll(squareGen) { occupied =>
       //given
       val threatenedSquares = TestBoard.allSquares filter { case Square(rank, file) => occupied.rank == rank || occupied.file == file }
@@ -26,7 +26,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     }
   }
 
-  "A knight" should "threaten two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
+  "A knight" should "move two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
     val KnightMoves = List((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, -2), (-1, 2))
     testPieceMoves(Knight, KnightMoves)
   }
