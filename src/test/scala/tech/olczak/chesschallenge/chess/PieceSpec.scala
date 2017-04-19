@@ -18,8 +18,8 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   "A rook" should "threaten any number of squares along any rank or file" in new TestContext {
     forAll(squareGen) { occupied =>
       //given
-      val threatenedSquares = SampleBoard.allSquares filter { case Square(rank, file) => occupied.rank == rank || occupied.file == file }
-      val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
+      val threatenedSquares = TestBoard.allSquares filter { case Square(rank, file) => occupied.rank == rank || occupied.file == file }
+      val safeSquares = TestBoard.allSquares.diff(threatenedSquares)
       //then
       forEvery(threatenedSquares) { square => assert(Rook.isThreatened(occupied)(square)) }
       forEvery(safeSquares) { square => assert(!Rook.isThreatened(occupied)(square)) }
@@ -33,7 +33,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
 
   trait TestContext {
 
-    val SampleBoard = Board(10, 10)
+    val TestBoard = Board(10, 10)
 
     val squareGen =
       for {
@@ -45,7 +45,7 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
       forAll(squareGen) { occupied =>
         //given
         val threatenedSquares = moves map { case (x, y) => Square(occupied.rank + x, occupied.file + y) }
-        val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
+        val safeSquares = TestBoard.allSquares.diff(threatenedSquares)
         //then
         forEvery(threatenedSquares) { square => assert(piece.isThreatened(occupied)(square)) }
         forEvery(safeSquares) { square => assert(!piece.isThreatened(occupied)(square)) }
