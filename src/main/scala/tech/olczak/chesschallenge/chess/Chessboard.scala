@@ -11,3 +11,9 @@ case class Chessboard(board: Board, piecePositions: Set[PiecePosition]) {
     }
 
 }
+
+object Chessboard {
+
+  def empty(board: Board) = Chessboard(board, Set.empty)
+
+}
