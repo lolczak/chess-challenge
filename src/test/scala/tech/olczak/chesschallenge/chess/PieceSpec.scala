@@ -5,17 +5,14 @@ import org.scalatest.Inspectors._
 import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.language.postfixOps
+
 class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
   "A king" should "threaten one square in any direction" in new TestContext {
-    forAll(squareGen) { occupied =>
-      //given
-      val threatenedSquares = for (x <- -1 to 1; y <- -1 to 1) yield Square(occupied.rank + x, occupied.file + y)
-      val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
-      //then
-      forEvery(threatenedSquares) { square => assert(King.isThreatened(occupied)(square)) }
-      forEvery(safeSquares) { square => assert(!King.isThreatened(occupied)(square)) }
-    }
+    //given
+    val KingMoves = for (x <- -1 to 1; y <- -1 to 1) yield (x, y)
+    testPieceMoves(King, KingMoves)
   }
 
   "A rook" should "threaten any number of squares along any rank or file" in new TestContext {
@@ -30,15 +27,8 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
   }
 
   "A knight" should "threaten two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
-    forAll(squareGen) { occupied =>
-      //given
-      val moves = List((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, -2), (-1, 2))
-      val threatenedSquares = moves map { case (x, y) => Square(occupied.rank + x, occupied.file + y) }
-      val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
-      //then
-      forEvery(threatenedSquares) { square => assert(Knight.isThreatened(occupied)(square)) }
-      forEvery(safeSquares) { square => assert(!Knight.isThreatened(occupied)(square)) }
-    }
+    val KnightMoves = List((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, -2), (-1, 2))
+    testPieceMoves(Knight, KnightMoves)
   }
 
   trait TestContext {
@@ -51,6 +41,16 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
         file <- Gen.choose(0, 9)
       } yield Square(rank, file)
 
+    def testPieceMoves(piece: Piece, moves: Seq[(Int, Int)]) = {
+      forAll(squareGen) { occupied =>
+        //given
+        val threatenedSquares = moves map { case (x, y) => Square(occupied.rank + x, occupied.file + y) }
+        val safeSquares = SampleBoard.allSquares.diff(threatenedSquares)
+        //then
+        forEvery(threatenedSquares) { square => assert(piece.isThreatened(occupied)(square)) }
+        forEvery(safeSquares) { square => assert(!piece.isThreatened(occupied)(square)) }
+      }
+    }
   }
 
 }
