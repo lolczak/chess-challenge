@@ -10,7 +10,8 @@ object BacktrackingSolverBenchmark extends PerformanceTest.Quickbenchmark {
   performance of "BacktrackingSolver" in {
     measure method "solve" in {
       using(chess) in { case (board, pieces) =>
-        BacktrackingSolver.solve(board, pieces)
+        val results = BacktrackingSolver.solve(board, pieces)
+        println(s"Found: ${results.size}")
       }
     }
   }
