@@ -31,16 +31,13 @@ object BacktrackingSolver extends ChessChallengeSolver {
         val expandedCandidates =
           for {
             (candidate, previousSquare) <- candidates
-            square                      <- candidate.findSafeSquares(piece).filter(_ > previousSquare)
+            square                      <- candidate.findSafeGreaterSquares(piece, previousSquare)
           } yield (candidate.placePiece(piece, square), square)
         loopPieces(pieceCount - 1, expandedCandidates)
       }
     }
 
-    val candidates =
-      for {
-        square <- chessboard.findSafeSquares(piece)
-      } yield (chessboard.placePiece(piece, square), square)
+    val candidates = chessboard.findSafeSquares(piece).map(square => (chessboard.placePiece(piece, square), square))
 
     loopPieces(pieceCount - 1, candidates)
   }

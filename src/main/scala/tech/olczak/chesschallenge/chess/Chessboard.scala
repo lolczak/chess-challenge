@@ -19,6 +19,9 @@ case class Chessboard(board: Board, placements: Set[Placement], safeSquares: Lis
   def findSafeSquares(piece: Piece): List[Square] =
     safeSquares.filter(tested => placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
 
+  def findSafeGreaterSquares(piece: Piece, square: Square): List[Square] =
+    safeSquares.filter(tested => tested > square && placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
+
 }
 
 object Chessboard {

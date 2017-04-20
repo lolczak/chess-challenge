@@ -5,7 +5,7 @@ import tech.olczak.chesschallenge.chess._
 
 object BacktrackingSolverBenchmark extends PerformanceTest.Quickbenchmark {
 
-  val chess = Gen.single("chess-problem")((Board(6, 6), List(Queen -> 6)))
+  val chess = Gen.single("chess-problem")((Board(8, 8), List(Queen -> 8)))
 
   performance of "BacktrackingSolver" in {
     measure method "solve" in {
