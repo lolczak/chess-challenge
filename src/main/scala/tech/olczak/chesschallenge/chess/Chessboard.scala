@@ -17,13 +17,16 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
   def findSafeGreaterSquares(piece: Piece, square: Square): List[Square] =
     safeSquares.filter(tested => tested > square && placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
 
-  lazy val toArrangement = Arrangement(board, placements.toSet)
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case Chessboard(otheBboard, otherPlacement, _) => board == otheBboard && placements.toSet == otherPlacement.toSet
+    case _ => false
+  }
 
 }
 
 object Chessboard {
 
-  def apply(board: Board, placements: List[Placement]): Chessboard =
+  def apply(board: Board, placements: Set[Placement]): Chessboard =
     placements.foldLeft(Chessboard.empty(board)) { case (chessboard, placement) => chessboard.placePiece(placement) }
 
   def empty(board: Board) = Chessboard(board, List.empty, board.allSquares)
