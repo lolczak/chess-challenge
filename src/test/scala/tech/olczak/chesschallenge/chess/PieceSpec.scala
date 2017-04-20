@@ -9,25 +9,25 @@ import scala.language.postfixOps
 
 class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyChecks {
 
-  "A king" should "move one square in any direction" in new TestContext {
+  "The king" should "move one square in any direction" in new TestContext {
     val KingMoves = (for (x <- -1 to 1; y <- -1 to 1) yield (x, y)).toList
     testPieceMoves(King, KingMoves)
   }
 
-  "A rook" should "move any number of squares along any rank or file" in new TestContext {
+  "The rook" should "move any number of squares along any rank or file" in new TestContext {
     testPieceMoves(Rook, RankForwardMoves, RankBackwardMoves, FileForwardMoves, FileBackwardMoves)
   }
 
-  "A knight" should "move two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
+  "The knight" should "move two squares vertically and one square horizontally, or two squares horizontally and one square vertically" in new TestContext {
     val KnightMoves = List((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, -2), (-1, 2))
     testPieceMoves(Knight, KnightMoves)
   }
 
-  "A bishop" should "move any number of squares diagonally" in new TestContext {
+  "The bishop" should "move any number of squares diagonally" in new TestContext {
     testPieceMoves(Bishop, DiagonalRfFfMoves, DiagonalRfFbMoves, DiagonalRbFfMoves, DiagonalRbFbMoves)
   }
 
-  "A queen" should "move any number of squares along rank, file, or diagonal" in new TestContext {
+  "The queen" should "move any number of squares along rank, file, or diagonal" in new TestContext {
     testPieceMoves(Queen, DiagonalRfFfMoves, DiagonalRfFbMoves, DiagonalRbFfMoves, DiagonalRbFbMoves, RankForwardMoves,
       RankBackwardMoves, FileForwardMoves, FileBackwardMoves)
   }
