@@ -25,19 +25,19 @@ object BacktrackingSolver extends ChessChallengeSolver {
 
   private def expand(piece: Piece, pieceCount: Int, chessboard: Chessboard): List[Chessboard] = {
     @tailrec
-    def loopPieces(pieceCount: Int, candidates: List[(Chessboard, Square)]): List[Chessboard] = {
+    def loopSamePieces(pieceCount: Int, candidates: List[(Chessboard, Square)]): List[Chessboard] = {
       if (pieceCount == 0) candidates.map(_._1)
       else {
         val expandedCandidates = candidates flatMap { case (candidate, previousSquare) =>
           loopSquares(piece, candidate, candidate.findSafeGreaterSquares(piece, previousSquare), List.empty)
         }
-        loopPieces(pieceCount - 1, expandedCandidates)
+        loopSamePieces(pieceCount - 1, expandedCandidates)
       }
     }
 
     val candidates = loopSquares(piece, chessboard, chessboard.findSafeSquares(piece), List.empty)
 
-    loopPieces(pieceCount - 1, candidates)
+    loopSamePieces(pieceCount - 1, candidates)
   }
 
   @tailrec
