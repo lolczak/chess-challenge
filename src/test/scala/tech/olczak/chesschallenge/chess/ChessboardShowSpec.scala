@@ -4,7 +4,7 @@ import org.scalatest.{Matchers, FlatSpec}
 import scalaz._
 import Scalaz._
 
-class ChessboardSpec extends FlatSpec with Matchers {
+class ChessboardShowSpec extends FlatSpec with Matchers {
 
   "A chessboard" should "convert empty arrangement to textual representation" in {
     //given
