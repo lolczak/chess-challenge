@@ -9,8 +9,9 @@ object BacktrackingSolver extends ChessChallengeSolver {
   override def solve(board: Board, pieceGroups: List[(Piece, Int)]): List[Arrangement] = {
     if (pieceGroups.isEmpty) List.empty
     else {
-      val (piece, count) = pieceGroups.head
-      loopPieceGroups(pieceGroups.tail, expand(piece, count, Chessboard.empty(board))) map (_.toArrangement)
+      val sorted = pieceGroups.sortBy(_._1.dangerRank)
+      val (piece, count) = sorted.head
+      loopPieceGroups(sorted.tail, expand(piece, count, Chessboard.empty(board))) map (_.toArrangement)
     }
   }
 
