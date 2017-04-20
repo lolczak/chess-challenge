@@ -28,18 +28,21 @@ object BacktrackingSolver extends ChessChallengeSolver {
     def loopPieces(pieceCount: Int, candidates: List[(Chessboard, Square)]): List[Chessboard] = {
       if (pieceCount == 0) candidates.map(_._1)
       else {
-        val expandedCandidates =
-          for {
-            (candidate, previousSquare) <- candidates
-            square                      <- candidate.findSafeGreaterSquares(piece, previousSquare)
-          } yield (candidate.placePiece(piece, square), square)
+        val expandedCandidates = candidates flatMap { case (candidate, previousSquare) =>
+          loopSquares(piece, candidate, candidate.findSafeGreaterSquares(piece, previousSquare), List.empty)
+        }
         loopPieces(pieceCount - 1, expandedCandidates)
       }
     }
 
-    val candidates = chessboard.findSafeSquares(piece).map(square => (chessboard.placePiece(piece, square), square))
+    val candidates = loopSquares(piece, chessboard, chessboard.findSafeSquares(piece), List.empty)
 
     loopPieces(pieceCount - 1, candidates)
   }
+
+  @tailrec
+  private def loopSquares(piece: Piece, chessboard: Chessboard, squares: List[Square], candidates: List[(Chessboard, Square)]): List[(Chessboard, Square)] =
+    if (squares.isEmpty) candidates
+    else loopSquares(piece, chessboard, squares.tail, (chessboard.placePiece(piece, squares.head), squares.head) :: candidates)
 
 }
