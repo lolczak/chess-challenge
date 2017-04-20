@@ -10,7 +10,7 @@ object BacktrackingSolver extends ChessChallengeSolver {
     if (pieceCounts.isEmpty) List.empty
     else {
       val head :: tail = pieceCounts flatMap { case (piece, count) => for (_ <- 1 to count) yield piece }
-      loopPieces(tail, expand(head, Chessboard.empty(board)))
+      loopPieces(tail, expand(head, Chessboard.empty(board))).distinct
     }
   }
 

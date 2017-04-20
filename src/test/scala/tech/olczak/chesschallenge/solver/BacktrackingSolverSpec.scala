@@ -30,7 +30,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
       //when
       val solutions = objectUnderTest.solve(board, pieces)
       //then
-      solutions should contain only (expectedSolutions: _*)
+      solutions should contain theSameElementsAs expectedSolutions
     }
   }
 
