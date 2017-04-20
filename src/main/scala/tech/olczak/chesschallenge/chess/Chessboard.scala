@@ -14,6 +14,9 @@ case class Chessboard(board: Board, piecePositions: Set[PiecePosition], safeSqua
     copy(piecePositions = piecePositions + PiecePosition(piece, square),
       safeSquares = safeSquares.filter(tested => !piece.isThreatened(square)(tested) && tested != square))
 
+  def findSafeSquares(piece: Piece): List[Square] =
+    safeSquares.filter(tested => piecePositions.forall(position => !piece.isThreatened(tested)(position.square)))
+
 }
 
 object Chessboard {
