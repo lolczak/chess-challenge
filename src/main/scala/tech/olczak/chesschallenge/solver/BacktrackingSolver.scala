@@ -19,7 +19,10 @@ object BacktrackingSolver extends ChessChallengeSolver {
     if (pieceGroups.isEmpty) candidates
     else {
       val (piece, count) = pieceGroups.head
-      loopPieceGroups(pieceGroups.tail, candidates flatMap (c => if (c.safeSquares.size >= pieceGroups.size) expand(piece, count, c) else List.empty))
+      val pieceCount = pieceGroups.map(_._2).sum
+      val expandedCandidates =
+        candidates.par flatMap (c => if (c.safeSquares.size >= pieceCount) expand(piece, count, c) else List.empty)
+      loopPieceGroups(pieceGroups.tail, expandedCandidates.toList)
     }
   }
 
