@@ -5,11 +5,6 @@ package tech.olczak.chesschallenge.chess
   */
 case class Chessboard(board: Board, placements: List[Placement], safeSquares: List[Square]) {
 
-  lazy val isSafe =
-    placements.toList.combinations(2).forall {
-      case List(p1, p2) => !p1.piece.isThreatened(p1.square)(p2.square) && !p2.piece.isThreatened(p2.square)(p1.square)
-    }
-
   def placePiece(piece: Piece, square: Square): Chessboard = placePiece(Placement(piece, square))
 
   def placePiece(placement: Placement): Chessboard =
