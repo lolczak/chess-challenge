@@ -18,8 +18,8 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
     safeSquares.filter(tested => tested > square && placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
 
   override def equals(obj: scala.Any): Boolean = obj match {
-    case Chessboard(otheBboard, otherPlacement, _) => board == otheBboard && placements.toSet == otherPlacement.toSet
-    case _ => false
+    case Chessboard(otherBoard, otherPlacement, _) => board == otherBoard && placements.toSet == otherPlacement.toSet
+    case _                                         => false
   }
 
 }
