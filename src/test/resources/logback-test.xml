@@ -7,7 +7,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.lolczak" level="DEBUG"/>
+    <logger name="tech.olczak" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

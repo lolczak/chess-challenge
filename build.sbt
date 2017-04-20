@@ -10,6 +10,14 @@ resolvers += "Tim Tennant's repo" at "http://dl.bintray.com/timt/repo/"
 
 resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+
+testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
+
+parallelExecution in Test := false
+
+logBuffered := false
+
 val scalaz = Seq (
   "org.scalaz" %% "scalaz-core" % "7.2.0",
   "org.scalaz" %% "scalaz-concurrent" % "7.2.0"
@@ -23,7 +31,8 @@ val log = Seq(
 val testLibs = Seq(
   "org.scalatest" %% "scalatest" % "2.2.2" % Test,
   "org.scalacheck" %% "scalacheck" % "1.11.6" % Test,
-  "org.mockito" % "mockito-all" % "1.10.19" % Test
+  "org.mockito" % "mockito-all" % "1.10.19" % Test,
+  "com.storm-enroute" %% "scalameter" % "0.6" % Test
 )
 
 libraryDependencies ++= scalaz ++ testLibs ++ log
