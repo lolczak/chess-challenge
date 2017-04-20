@@ -19,7 +19,7 @@ object BacktrackingSolver extends ChessChallengeSolver {
     if (pieces.isEmpty) candidates
     else {
       val piece = pieces.head
-      loopPieces(pieces.tail, candidates flatMap (c => expand(piece, c)))
+      loopPieces(pieces.tail, candidates flatMap (c => if(c.safeSquares.size >= pieces.size) expand(piece, c) else List.empty))
     }
   }
 
