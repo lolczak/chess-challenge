@@ -1,5 +1,7 @@
 package tech.olczak.chesschallenge.chess
 
+import scalaz.{Cord, Show}
+
 /**
   * Represents an arrangement of pieces on a chessboard.
   */
@@ -30,5 +32,21 @@ object Chessboard {
     placements.foldLeft(Chessboard.empty(board)) { case (chessboard, placement) => chessboard.placePiece(placement) }
 
   def empty(board: Board) = Chessboard(board, List.empty, board.allSquares)
+
+  implicit val chessboardShow = new Show[Chessboard] {
+
+    val EmptySquare = "_"
+    val Space = " "
+    val NewLine = "\n"
+
+    override def show(chessboard: Chessboard): Cord = {
+      chessboard.board.allSquares.foldLeft(Cord.empty) {
+        case (cords, Square(rank, file)) =>
+          if (file == chessboard.board.fileCount - 1) cords :+ Space :+ EmptySquare :+ NewLine
+          else if (file == 0) cords :+ EmptySquare
+          else cords :+ Space :+ EmptySquare
+      }
+    }
+  }
 
 }
