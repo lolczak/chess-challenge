@@ -25,7 +25,7 @@ object BacktrackingSolver extends ChessChallengeSolver {
 
   private def expand(piece: Piece, chessboard: Chessboard): List[Chessboard] = {
     for {
-      square    <- chessboard.board.allSquares.diff(chessboard.piecePositions.map(_.square).toList)
+      square    <- chessboard.unoccupiedSquares
       candidate =  chessboard.copy(piecePositions = chessboard.piecePositions + PiecePosition(piece, square))
       if candidate.isSafe
     } yield candidate
