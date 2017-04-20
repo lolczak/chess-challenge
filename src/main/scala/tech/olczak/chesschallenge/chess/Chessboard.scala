@@ -36,15 +36,15 @@ object Chessboard {
   implicit val chessboardShow = new Show[Chessboard] {
 
     val EmptySquare = "_"
-    val Space = " "
-    val NewLine = "\n"
+    val Separator = " "
+    val EndOfFile = "\n"
 
     override def show(chessboard: Chessboard): Cord = {
       chessboard.board.allSquares.foldLeft(Cord.empty) {
         case (cords, Square(rank, file)) =>
-          if (file == chessboard.board.fileCount - 1) cords :+ Space :+ EmptySquare :+ NewLine
+          if (file == chessboard.board.fileCount - 1) cords :+ Separator :+ EmptySquare :+ EndOfFile
           else if (file == 0) cords :+ EmptySquare
-          else cords :+ Space :+ EmptySquare
+          else cords :+ Separator :+ EmptySquare
       }
     }
   }
