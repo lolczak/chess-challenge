@@ -1,7 +1,7 @@
 package tech.olczak.chesschallenge.app.effect
 
 import scala.language.higherKinds
-import scalaz.{Free, Functor, Inject}
+import scalaz._
 
 sealed trait SystemIO[A]
 final case class Exit[A](status: Int, next: A) extends SystemIO[A]
@@ -24,4 +24,19 @@ object SystemIO {
   def exit[F[_] : Functor](status: Int)(implicit I: Inject[SystemIO, F]): Free[F, Unit] =
     Inject.inject[F, SystemIO, Unit](Exit(status, Free.point(())))
 
+}
+
+object RealSystem extends (SystemIO ~> Id.Id) {
+  import Id._
+  import scalaz.syntax.monad._
+
+  override def apply[A](in: SystemIO[A]): Id.Id[A] =
+    in match {
+      case Exit(status, next)     =>
+        System.exit(status)
+        next.point[Id]
+
+      case GetCurrentMillis(next) =>
+        next(System.currentTimeMillis())
+    }
 }
