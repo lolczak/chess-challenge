@@ -20,7 +20,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
       //when
       val solutions = objectUnderTest.solve(ChessConfig(board, List(Queen -> 1)))
       //then
-      solutions should contain theSameElementsAs genAllSquares(board).map(s => Chessboard(board, Set(Placement(Queen, s))))
+      solutions should contain theSameElementsAs genAllSquares(board).map(s => Chessboard.empty(board).placePiece(Queen, s))
     }
   }
 
