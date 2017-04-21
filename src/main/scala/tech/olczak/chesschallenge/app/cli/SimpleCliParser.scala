@@ -27,9 +27,9 @@ object SimpleCliParser extends CliParser {
 
   private def parsePieces(pieces: List[String]): ValidationNel[String, List[(Piece, Int)]] = {
     val pieceGroups = pieces.traverseU(parsePiece)
-    pieceGroups.ensure(NonEmptyList("There are duplications of pieces")) { groups =>
-      groups.groupBy(_._1).forall(_._2.size == 1)
-    }
+    val onDuplication = NonEmptyList("There are duplications of pieces")
+    val duplicationCondition = (groups: List[(Piece, Int)]) => { groups.groupBy(_._1).forall(_._2.size == 1) }
+    pieceGroups.ensure(onDuplication)(duplicationCondition)
   }
 
   private def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
