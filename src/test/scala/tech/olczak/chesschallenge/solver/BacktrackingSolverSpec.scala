@@ -20,12 +20,12 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
       //when
       val solutions = objectUnderTest.solve(ChessConfig(board, List(Queen -> 1)))
       //then
-      solutions should contain theSameElementsAs genAllSquares(board).map(s => Chessboard.empty(board).placePiece(Queen, s))
+      solutions should contain theSameElementsAs board.allSquares.map(s => Chessboard.empty(board).placePiece(Queen, s))
     }
   }
 
   it should "solve real world problem" in new TestContext {
-    forAll(RealWorldProblems) { case (config, expectedSolutions) =>
+    forAll(realWorldProblemGen) { case (config, expectedSolutions) =>
       //when
       val solutions = objectUnderTest.solve(config)
       //then
@@ -43,10 +43,7 @@ class BacktrackingSolverSpec extends FlatSpec with Matchers with GeneratorDriven
         fileCount <- Gen.choose(1, 8)
       } yield Board(rankCount, fileCount)
 
-    def genAllSquares(dimension: Board) =
-      for (rank <- 0 until dimension.rankCount; file <- 0 until dimension.fileCount) yield Square(rank, file)
-
-    val RealWorldProblems = Gen oneOf Seq(TinyChessConfig -> TinyConfigSolutions, MediumChessConfig -> MediumConfigSolutions)
+    val realWorldProblemGen = Gen oneOf Seq(TinyChessConfig -> TinyConfigSolutions, MediumChessConfig -> MediumConfigSolutions)
 
   }
 
