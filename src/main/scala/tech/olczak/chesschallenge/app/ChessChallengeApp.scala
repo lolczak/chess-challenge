@@ -6,10 +6,10 @@ import tech.olczak.chesschallenge.app.cli.ParseFailure
 import tech.olczak.chesschallenge.app.effect.ConsoleIO._
 import tech.olczak.chesschallenge.app.effect.SystemIO._
 import tech.olczak.chesschallenge.app.effect.{ConsoleIO, SystemIO}
-import tech.olczak.chesschallenge.solver.ChessConfig
 
 import scala.concurrent.duration.Duration
 import scalaz._
+import Scalaz._
 
 object ChessChallengeApp {
 
@@ -30,6 +30,7 @@ object ChessChallengeApp {
             duration   = Duration(end - start, TimeUnit.MILLISECONDS)
             _         <- printLine[IO](s"Found ${solutions.size} solutions.")
             _         <- printLine[IO](s"Elapsed time: ${duration.toSeconds} sec and ${duration.toMillis % 1000} millis.")
+            _         <- solutions.traverseU(c => printLine[IO](c.shows))
           } yield ()
        }
     } yield ()

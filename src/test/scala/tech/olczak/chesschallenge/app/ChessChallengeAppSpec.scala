@@ -70,6 +70,33 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         stdout should contain("Elapsed time: 20 sec and 234 millis.")
       }
 
+      "list all solutions to the console" in new TestContext {
+        //given
+        when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
+        when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
+        //when
+        run(mainCmd)
+        //then
+        stdout should contain allOf(
+          """K _ K
+            |_ _ _
+            |_ R _
+            |""".stripMargin,
+          """_ R _
+            |_ _ _
+            |K _ K
+            |""".stripMargin,
+          """K _ _
+            |_ _ R
+            |K _ _
+            |""".stripMargin,
+          """_ _ K
+            |R _ _
+            |_ _ K
+            |""".stripMargin
+        )
+      }
+
     }
 
   }
