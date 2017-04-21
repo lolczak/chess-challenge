@@ -7,7 +7,7 @@ import Scalaz._
 
 class ChessboardShowSpec extends FlatSpec with Matchers {
 
-  "A chessboard" should "convert empty arrangement to textual representation" in {
+  "A chessboard" should "convert an empty arrangement to textual representation" in {
     //given
     val chessboard = Chessboard.empty(Board(5, 5))
     //when

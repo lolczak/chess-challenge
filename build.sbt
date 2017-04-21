@@ -12,12 +12,6 @@ resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
-testFrameworks += new TestFramework("org.scalameter.ScalaMeterFramework")
-
-parallelExecution in Test := false
-
-logBuffered := false
-
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
 
 val scalaz = Seq (
@@ -48,4 +42,4 @@ fork in run := true
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-javaOptions in run  ++= Seq("-Xms6g", "-Xmx8g", "-Xss400m", "-XX:MaxNewSize=4g", "-XX:+UseParallelGC", "-XX:+UseParallelOldGC", "-XX:MaxNewSize=3g")
+javaOptions in run ++= Seq("-Xms6g", "-Xmx8g", "-Xss400m", "-XX:MaxNewSize=4g", "-XX:+UseParallelGC", "-XX:+UseParallelOldGC", "-XX:MaxNewSize=3g")
