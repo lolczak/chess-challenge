@@ -25,10 +25,10 @@ object SimpleCliParser extends CliParser {
     config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
   }
 
-  private def parsePieces(pieces: List[String]): ValidationNel[String, List[(Piece, Int)]] = {
-    val pieceGroups = pieces.traverseU(parsePiece)
+  private def parsePieces(symbols: List[String]): ValidationNel[String, List[(Piece, Int)]] = {
+    val pieceGroups = symbols.traverseU(parsePiece)
     val duplicationFailure = NonEmptyList("There are duplications of pieces")
-    val duplicationTest = (groups: List[(Piece, Int)]) => groups.groupBy(_._1).forall { case (_, agr) => agr.size == 1 }
+    val duplicationTest = (pieces: List[(Piece, Int)]) => pieces.groupBy(_._1).forall { case (_, group) => group.size == 1 }
     pieceGroups.ensure(duplicationFailure)(duplicationTest)
   }
 
