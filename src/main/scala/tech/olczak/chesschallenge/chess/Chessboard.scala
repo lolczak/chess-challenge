@@ -36,7 +36,9 @@ object Chessboard {
   implicit val chessboardShow = new Show[Chessboard] {
 
     val EmptySquare = "_"
+
     val Separator = " "
+
     val EndOfRank = "\n"
 
     override def show(chessboard: Chessboard): Cord = {
@@ -46,11 +48,16 @@ object Chessboard {
             .find(_.square == s)
             .map(_.piece.symbol)
             .getOrElse(EmptySquare)
-          if (file == chessboard.board.fileCount - 1) cords :+ Separator :+ symbol :+ EndOfRank
-          else if (file == 0) cords :+ symbol
+
+          if (isEndOfRank(file, chessboard)) cords :+ Separator :+ symbol :+ EndOfRank
+          else if (isBeginningOfRank(file)) cords :+ symbol
           else cords :+ Separator :+ symbol
       }
     }
+
+    private def isBeginningOfRank(file: Int): Boolean = file == 0
+
+    private def isEndOfRank(file: Int, chessboard: Chessboard): Boolean = file == chessboard.board.fileCount - 1
 
   }
 
