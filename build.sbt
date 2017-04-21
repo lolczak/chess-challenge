@@ -18,6 +18,8 @@ parallelExecution in Test := false
 
 logBuffered := false
 
+addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.7.1")
+
 val scalaz = Seq (
   "org.scalaz" %% "scalaz-core" % "7.2.0",
   "org.scalaz" %% "scalaz-concurrent" % "7.2.0"
