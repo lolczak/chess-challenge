@@ -4,6 +4,6 @@ import scalaz.State
 
 package object app {
 
-  type TestState[A] = State[Buffer, A]
+  type TestState[A] = State[RuntimeState, A]
 
 }

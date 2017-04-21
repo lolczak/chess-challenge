@@ -5,7 +5,7 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.ChessObjectMother._
-import tech.olczak.chesschallenge.app.ChessChallengeApp.{IO, mainCmd}
+import tech.olczak.chesschallenge.app.ChessChallengeApp.{IO, main}
 import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
 import tech.olczak.chesschallenge.app.effect._
 import tech.olczak.chesschallenge.solver.ChessChallengeSolver
@@ -21,9 +21,9 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        stdout should contain("Hello, starting chess challenge app...")
+        runtime.stdout should contain("Hello, starting chess challenge app...")
       }
     }
 
@@ -32,19 +32,19 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        errorCode shouldBe 1
+        runtime.maybeExitCode shouldBe Some(1)
       }
 
       "print error message" in new TestContext {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        stderr should contain("Invalid arguments: rank count missing")
-        stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
+        runtime.stderr should contain("Invalid arguments: rank count missing")
+        runtime.stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
       }
     }
 
@@ -55,9 +55,9 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        stdout should contain("Found 4 solutions.")
+        runtime.stdout should contain("Found 4 solutions.")
       }
 
       "print the time the solver took to find all solutions" in new TestContext {
@@ -65,9 +65,9 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        stdout should contain("Elapsed time: 20 sec and 234 millis.")
+        runtime.stdout should contain(s"Elapsed time: ${TestClockTick / 1000} sec and ${TestClockTick % 1000} millis.")
       }
 
       "list all solutions to the console" in new TestContext {
@@ -75,9 +75,9 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        run(mainCmd)
+        val runtime = run(main)
         //then
-        stdout should contain allOf(
+        runtime.stdout should contain allOf(
           """K _ K
             |_ _ _
             |_ R _
@@ -103,25 +103,20 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
 
   trait TestContext {
 
+    val TestClockTick = 20234l
+
     val cliParser = mock[CliParser]
 
     val solver = mock[ChessChallengeSolver]
 
-    lazy val env = Environment(List("3", "3", "K2", "R1"), cliParser, solver)
+    lazy val TestEnvironment = Environment(List("3", "3", "K2", "R1"), cliParser, solver)
 
-    var buffer = Buffer(millis = Stream.iterate(0l)(_ + 20234l))
+    var initialRuntimeState = RuntimeState(clockTicks = Stream.iterate(0l)(_ + TestClockTick))
 
-    def run[A](cmd: ReaderT[Free[IO, ?], Environment, A]): A = {
-      val (buf, result) = cmd.run(env).foldMap(ConsoleToState or SystemToState).run(buffer)
-      buffer = buf
-      result
+    def run[A](cmd: ReaderT[Free[IO, ?], Environment, A]): RuntimeState = {
+      val (runtime, result) = cmd.run(TestEnvironment).foldMap(ConsoleToState or SystemToState).run(initialRuntimeState)
+      runtime.copy(stdout = runtime.stdout.reverse, stderr = runtime.stderr.reverse)
     }
-
-    def stdout: List[String] = buffer.stdout.reverse
-
-    def stderr: List[String] = buffer.stderr.reverse
-
-    def errorCode: Int = buffer.exitCode.getOrElse(0)
 
   }
 

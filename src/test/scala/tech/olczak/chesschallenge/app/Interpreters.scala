@@ -7,10 +7,10 @@ import scalaz._
 
 object ConsoleToState extends (ConsoleIO ~> TestState) {
 
-  override def apply[A](in: ConsoleIO[A]): State[Buffer, A] =
+  override def apply[A](in: ConsoleIO[A]): State[RuntimeState, A] =
     in match {
-      case PrintLine(msg, next)  => State[Buffer, A](buf => (buf.copy(stdout = msg :: buf.stdout), next))
-      case PrintError(msg, next) => State[Buffer, A](buf => (buf.copy(stderr = msg :: buf.stderr), next))
+      case PrintLine(msg, next)  => State[RuntimeState, A](rs => (rs.copy(stdout = msg :: rs.stdout), next))
+      case PrintError(msg, next) => State[RuntimeState, A](rs => (rs.copy(stderr = msg :: rs.stderr), next))
     }
 
 
@@ -18,16 +18,15 @@ object ConsoleToState extends (ConsoleIO ~> TestState) {
 
 object SystemToState extends (SystemIO ~> TestState) {
 
-  override def apply[A](in: SystemIO[A]): State[Buffer, A] =
+  override def apply[A](in: SystemIO[A]): State[RuntimeState, A] =
     in match {
-      case Exit(status, next)     => State[Buffer, A](buf => (buf.copy(exitCode = Some(status)), next))
-      case GetCurrentMillis(next) => State[Buffer, A](buf => (buf.copy(millis = buf.millis.tail), next(buf.millis.head)))
+      case Exit(status, next)     => State[RuntimeState, A](rs => (rs.copy(maybeExitCode = Some(status)), next))
+      case GetCurrentMillis(next) => State[RuntimeState, A](rs => (rs.copy(clockTicks = rs.clockTicks.tail), next(rs.clockTicks.head)))
     }
 
 }
 
-case class Buffer(stdout: List[String] = List.empty,
-                  stderr: List[String] = List.empty,
-                  millis: Stream[Long] = Stream.empty,
-                  exitCode: Option[Int] = None
-                 )
+case class RuntimeState(stdout: List[String] = List.empty,
+                        stderr: List[String] = List.empty,
+                        clockTicks: Stream[Long] = Stream.empty,
+                        maybeExitCode: Option[Int] = None)

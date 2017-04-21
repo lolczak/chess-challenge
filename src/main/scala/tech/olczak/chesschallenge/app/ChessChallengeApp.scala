@@ -16,7 +16,7 @@ object ChessChallengeApp {
 
   type IO[A] = Coproduct[ConsoleIO, SystemIO, A]
 
-  val mainCmd = ReaderT[Free[IO, ?], Environment, Unit] { env: Environment =>
+  val main = ReaderT[Free[IO, ?], Environment, Unit] { env: Environment =>
     for {
       _ <- printLine[IO]("Hello, starting chess challenge app...")
       _ <- env.cliParser.parse(env.args) fold (handleParseFailure, solve(_).run(env))
