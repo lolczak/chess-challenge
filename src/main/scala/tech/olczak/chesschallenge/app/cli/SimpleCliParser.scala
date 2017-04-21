@@ -20,9 +20,16 @@ object SimpleCliParser extends CliParser {
 
   private def parseConfig(rankStr: String, fileStr: String, pieces: List[String]): ParseFailure \/ ChessConfig = {
     val board = parseBoard(rankStr, fileStr)
-    val groups = pieces.traverseU(parsePiece)
+    val groups = parsePieces(pieces)
     val config = (board ⊛ groups)(ChessConfig.apply)
     config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
+  }
+
+  private def parsePieces(pieces: List[String]): ValidationNel[String, List[(Piece, Int)]] = {
+    val pieceGroups = pieces.traverseU(parsePiece)
+    pieceGroups.ensure(NonEmptyList("There are duplications of pieces")) { groups =>
+      groups.groupBy(_._1).forall(_._2.size == 1)
+    }
   }
 
   private def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {

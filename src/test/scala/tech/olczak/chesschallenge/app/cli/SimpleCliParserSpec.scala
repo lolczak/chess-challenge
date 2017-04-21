@@ -42,4 +42,9 @@ class SimpleCliParserSpec extends FlatSpec with Matchers {
     SimpleCliParser.parse(List("7", "7", "K2", "Q2", "B2", "N1")) should matchPattern { case \/-(ChessConfig(Board(7, 7), List((King, 2), (Queen, 2), (Bishop, 2), (Knight, 1)))) => }
   }
 
+  it should "reject repeated pieces" in {
+    SimpleCliParser.parse(List("3", "8", "K2", "K8")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("7", "7", "K2", "Q2", "B2", "Q1")) should matchPattern { case -\/(ParseFailure(_)) => }
+  }
+
 }
