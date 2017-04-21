@@ -1,6 +1,6 @@
 package tech.olczak.chesschallenge.app
 
-import org.mockito.Matchers.{any, eq => argEq}
+import org.mockito.Matchers.any
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
@@ -8,6 +8,7 @@ import tech.olczak.chesschallenge.ChessObjectMother._
 import tech.olczak.chesschallenge.app.ChessChallengeApp.{IO, mainAction}
 import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
 import tech.olczak.chesschallenge.app.effect._
+import tech.olczak.chesschallenge.app.interpreter.{ConsoleToState, RuntimeState, SystemToState}
 import tech.olczak.chesschallenge.solver.ChessChallengeSolver
 
 import scalaz._
