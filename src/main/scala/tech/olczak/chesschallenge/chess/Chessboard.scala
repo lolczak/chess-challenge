@@ -46,9 +46,9 @@ object Chessboard {
             .map(_.piece.symbol)
             .getOrElse(EmptySquare)
 
-          if (isEndOfRank(file, chessboard)) cords :+ Separator :+ symbol :+ EndOfRank
+          if (isEndOfRank(file, chessboard)) cords :+ s"$Separator$symbol$EndOfRank"
           else if (isBeginningOfRank(file)) cords :+ symbol
-          else cords :+ Separator :+ symbol
+          else cords :+ s"$Separator$symbol"
       }
     }
 
