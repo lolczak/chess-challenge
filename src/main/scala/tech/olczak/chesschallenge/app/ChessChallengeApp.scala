@@ -14,7 +14,16 @@ object ChessChallengeApp {
   val mainCmd = ReaderT[Free[IO, ?], Environment, Unit] { env: Environment =>
     for {
       _ <- printLine[IO]("Hello, starting chess challenge app...")
-      _ <- env.cliParser.parse(env.args).fold(handleParseFailure, solveChessProblem)
+      _ <- env.cliParser.parse(env.args) match {
+        case -\/(failure) =>
+          handleParseFailure(failure)
+        case \/-(ChessProblem(board, pieces)) =>
+          for {
+            _         <- printLine[IO](s"Looking solutions for $board and $pieces")
+            solutions =  env.solver.solve(board, pieces)
+            _         <- printLine[IO](s"Found ${solutions.size} solutions.")
+          } yield ()
+       }
     } yield ()
   }
 
