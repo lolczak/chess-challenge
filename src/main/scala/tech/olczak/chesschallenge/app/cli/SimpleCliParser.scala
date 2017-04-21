@@ -12,18 +12,21 @@ object SimpleCliParser extends CliParser {
 
   val PieceRegEx = """([KQRNB])(\d+)""".r
 
-  override def parse(args: List[String]): \/[ParseFailure, ChessConfig] = {
-    if (args.size < 3) -\/(ParseFailure("Too less arguments"))
-    else {
-      val (rankStr :: fileStr :: pieces) = args
-      val board = parseBoard(rankStr, fileStr)
-      val groups = pieces.traverseU(parsePiece)
-      val config = (board ⊛ groups) { ChessConfig(_, _) }
-      config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
+  override def parse(args: List[String]): \/[ParseFailure, ChessConfig] =
+    args match {
+      case rankStr :: fileStr :: pieces => parseConfig(rankStr, fileStr, pieces)
+      case _                            => ParseFailure("Too less arguments").left
     }
+
+
+  private def parseConfig(rankStr: String, fileStr: String, pieces: List[String]): Disjunction[ParseFailure, ChessConfig] = {
+    val board = parseBoard(rankStr, fileStr)
+    val groups = pieces.traverseU(parsePiece)
+    val config = (board ⊛ groups) { ChessConfig(_, _) }
+    config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
   }
 
-  def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
+  private def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
     val rank = parseInt(rankStr) leftMap (_ => "Rank count is not a number") toValidationNel
     val file = parseInt(fileStr) leftMap (_ => "File count is not a number") toValidationNel
 
