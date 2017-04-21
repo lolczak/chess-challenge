@@ -9,7 +9,14 @@ class SimpleCliParserSpec extends FlatSpec with Matchers {
   "A cli parser" should "report an error when there is insufficient number of args" in {
     SimpleCliParser.parse(List.empty) should matchPattern { case -\/(ParseFailure(_)) => }
     SimpleCliParser.parse(List("3")) should matchPattern { case -\/(ParseFailure(_)) => }
-    SimpleCliParser.parse(List("4")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", "4")) should matchPattern { case -\/(ParseFailure(_)) => }
+  }
+
+  it should "fail when rank count is not number" in {
+    SimpleCliParser.parse(List("a", "3", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("##@", "3", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List(":", "3", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("122a", "3", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
   }
 
 }
