@@ -1,15 +1,22 @@
 package tech.olczak.chesschallenge.app
 
+import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.app.ChessChallengeApp.{IO, mainCmd}
+import tech.olczak.chesschallenge.app.cli.{ParseFailure, CliParser}
 import tech.olczak.chesschallenge.app.effect._
 import scalaz._
+import org.mockito.Matchers.{any, eq => argEq}
+import org.mockito.Mockito._
 
-class ChessChallengeAppSpec extends WordSpec with Matchers {
+class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
 
   "A chess challenge app" when {
     "starting" should {
       "print greeting" in new TestContext {
+        //given
+        //given
+        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
         run(mainCmd)
         //then
@@ -19,10 +26,10 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
   }
 
   it when {
-    "there is not enough command line arguments" should {
+    "command line arguments are invalid" should {
       "fail with error code equal 1" in new TestContext {
         //given
-        override lazy val env = Environment(List.empty)
+        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
         run(mainCmd)
         //then
@@ -31,11 +38,11 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
 
       "print error message" in new TestContext {
         //given
-        override lazy val env = Environment(List.empty)
+        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
         run(mainCmd)
         //then
-        stderr should contain("Invalid arguments.")
+        stderr should contain("Invalid arguments: rank count missing")
         stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
       }
     }
@@ -43,7 +50,9 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
 
   trait TestContext {
 
-    lazy val env = Environment(List("3", "3", "K2", "R1"))
+    val cliParser = mock[CliParser]
+
+    lazy val env = Environment(List("3", "3", "K2", "R1"), cliParser)
 
     var buffer = Buffer(List.empty)
 
@@ -58,7 +67,6 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
     def stderr: List[String] = buffer.stderr.reverse
 
     def errorCode: Int = buffer.exitCode.getOrElse(0)
-
 
   }
 

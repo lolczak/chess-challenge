@@ -1,3 +1,5 @@
 package tech.olczak.chesschallenge.app
 
-case class Environment(args: List[String])
+import tech.olczak.chesschallenge.app.cli.CliParser
+
+case class Environment(args: List[String], cliParser: CliParser)
