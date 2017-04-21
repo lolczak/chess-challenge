@@ -49,6 +49,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
     }
 
     "solutions are found" should {
+
       "print the total number of unique arrangements" in new TestContext {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
@@ -58,6 +59,17 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         //then
         stdout should contain("Found 4 solutions.")
       }
+
+      "print the time the solver took to find all solutions" in new TestContext {
+        //given
+        when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
+        when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
+        //when
+        run(mainCmd)
+        //then
+        stdout should contain("Elapsed time: 20 sec and 234 millis.")
+      }
+
     }
 
   }
@@ -70,10 +82,10 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
 
     lazy val env = Environment(List("3", "3", "K2", "R1"), cliParser, solver)
 
-    var buffer = Buffer(List.empty)
+    var buffer = Buffer(millis = Stream.iterate(0l)(_ + 20234l))
 
     def run[A](cmd: ReaderT[Free[IO, ?], Environment, A]): A = {
-      val (buf, result) = cmd.run(env).foldMap(ConsoleToState or SystemToState).run(Buffer(List.empty))
+      val (buf, result) = cmd.run(env).foldMap(ConsoleToState or SystemToState).run(buffer)
       buffer = buf
       result
     }

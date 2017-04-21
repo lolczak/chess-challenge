@@ -20,12 +20,14 @@ object SystemToState extends (SystemIO ~> TestState) {
 
   override def apply[A](in: SystemIO[A]): State[Buffer, A] =
     in match {
-      case Exit(status, next) => State[Buffer, A](buf => (buf.copy(exitCode = Some(status)), next))
+      case Exit(status, next)     => State[Buffer, A](buf => (buf.copy(exitCode = Some(status)), next))
+      case GetCurrentMillis(next) => State[Buffer, A](buf => (buf.copy(millis = buf.millis.tail), next(buf.millis.head)))
     }
 
 }
 
 case class Buffer(stdout: List[String] = List.empty,
                   stderr: List[String] = List.empty,
+                  millis: Stream[Long] = Stream.empty,
                   exitCode: Option[Int] = None
                  )
