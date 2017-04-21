@@ -22,7 +22,7 @@ object SimpleCliParser extends CliParser {
   private def parseConfig(rankStr: String, fileStr: String, pieces: List[String]): Disjunction[ParseFailure, ChessConfig] = {
     val board = parseBoard(rankStr, fileStr)
     val groups = pieces.traverseU(parsePiece)
-    val config = (board ⊛ groups) { ChessConfig(_, _) }
+    val config = (board ⊛ groups)(ChessConfig.apply)
     config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
   }
 
@@ -30,7 +30,7 @@ object SimpleCliParser extends CliParser {
     val rank = parseInt(rankStr) leftMap (_ => "Rank count is not a number") toValidationNel
     val file = parseInt(fileStr) leftMap (_ => "File count is not a number") toValidationNel
 
-    (rank ⊛ file) { Board(_, _) }
+    (rank ⊛ file)(Board.apply)
   }
 
   private def parseInt(str: String): ValidationNel[Throwable, Int] =
