@@ -1,8 +1,10 @@
 package tech.olczak.chesschallenge.app.cli
 
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{FlatSpec, Matchers}
+import tech.olczak.chesschallenge.chess._
+import tech.olczak.chesschallenge.solver.ChessConfig
 
-import scalaz.-\/
+import scalaz.{-\/, \/-}
 
 class SimpleCliParserSpec extends FlatSpec with Matchers {
 
@@ -29,7 +31,15 @@ class SimpleCliParserSpec extends FlatSpec with Matchers {
     SimpleCliParser.parse(List("4", "4", "K")) should matchPattern { case -\/(ParseFailure(_)) => }
     SimpleCliParser.parse(List("5", "5", "Q")) should matchPattern { case -\/(ParseFailure(_)) => }
     SimpleCliParser.parse(List("3", "7", "2K")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", "7", "A4")) should matchPattern { case -\/(ParseFailure(_)) => }
     SimpleCliParser.parse(List("3", "8", "3243")) should matchPattern { case -\/(ParseFailure(_)) => }
+  }
+
+  it should "parse correct args" in {
+    SimpleCliParser.parse(List("8", "8", "Q8")) should matchPattern { case \/-(ChessConfig(Board(8, 8), List((Queen, 8)))) => }
+    SimpleCliParser.parse(List("3", "3", "K2", "R1")) should matchPattern { case \/-(ChessConfig(Board(3, 3), List((King, 2), (Rook, 1)))) => }
+    SimpleCliParser.parse(List("4", "4", "R2", "N4")) should matchPattern { case \/-(ChessConfig(Board(4, 4), List((Rook, 2), (Knight, 4)))) => }
+    SimpleCliParser.parse(List("7", "7", "K2", "Q2", "B2", "N1")) should matchPattern { case \/-(ChessConfig(Board(7, 7), List((King, 2), (Queen, 2), (Bishop, 2), (Knight, 1)))) => }
   }
 
 }
