@@ -24,7 +24,10 @@ class ChessboardShowSpec extends FlatSpec with Matchers {
 
   it should "convert a piece arrangement to textual representation" in {
     //given
-    val chessboard = Chessboard(Board(4, 4), Set(Placement(King, Square(0, 0)), Placement(Knight, Square(1, 2)), Placement(Queen, Square(3, 3))))
+    val chessboard = Chessboard.empty(Board(4, 4))
+      .placePiece(King, Square(0, 0))
+      .placePiece(Knight, Square(1, 2))
+      .placePiece(Queen, Square(3, 3))
     //when
     val result = chessboard.shows
     //then
