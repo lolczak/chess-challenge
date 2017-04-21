@@ -25,11 +25,6 @@ val scalaz = Seq (
   "org.scalaz" %% "scalaz-concurrent" % "7.2.0"
 )
 
-val log = Seq(
-  "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2" % Provided exclude("org.scala-lang", "scala-reflect"),
-  "ch.qos.logback" % "logback-classic" % "1.1.2" % Test
-)
-
 val testLibs = Seq(
   "org.scalatest" %% "scalatest" % "2.2.2" % Test,
   "org.scalacheck" %% "scalacheck" % "1.11.6" % Test,
@@ -37,10 +32,20 @@ val testLibs = Seq(
   "com.storm-enroute" %% "scalameter" % "0.6" % Test
 )
 
-libraryDependencies ++= scalaz ++ testLibs ++ log
+libraryDependencies ++= scalaz ++ testLibs
 
 publishMavenStyle := true
 
 publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
+
+mainClass in (Compile,run) := Some("tech.olczak.chesschallenge.ChessChallengeRunner")
+
+scalacOptions ++= Seq("-optimise", "-target:jvm-1.8")
+
+fork in run := true
+
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
+
+javaOptions in run  ++= Seq("-Xms6g", "-Xmx8g", "-XX:MaxNewSize=4g", "-XX:+UseParallelGC", "-XX:+UseParallelOldGC", "-XX:MaxNewSize=3g")
