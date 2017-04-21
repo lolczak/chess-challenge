@@ -16,7 +16,7 @@ object ConsoleIO {
   }
 
   // Smart constructors
-  def printLine[F[_]: Functor](msg: String)(implicit I: Inject[ConsoleIO, F]): Free[F, Unit] =
+  def printLine[F[_] : Functor](msg: String)(implicit I: Inject[ConsoleIO, F]): Free[F, Unit] =
     Inject.inject[F, ConsoleIO, Unit](PrintLine(msg, Free.point(())))
 
 }

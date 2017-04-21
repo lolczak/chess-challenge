@@ -1,7 +1,8 @@
 package tech.olczak.chesschallenge.app
-import scala.language.higherKinds
-import tech.olczak.chesschallenge.app.effect.{PrintLine, ConsoleIO}
 
+import tech.olczak.chesschallenge.app.effect.{ConsoleIO, PrintLine}
+
+import scala.language.higherKinds
 import scalaz._
 
 object ConsoleToState extends (ConsoleIO ~> State[Buffer, ?]) {
