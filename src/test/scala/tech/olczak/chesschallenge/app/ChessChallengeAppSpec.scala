@@ -1,20 +1,21 @@
 package tech.olczak.chesschallenge.app
 
+import org.mockito.Matchers.{any, eq => argEq}
+import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.app.ChessChallengeApp.{IO, mainCmd}
-import tech.olczak.chesschallenge.app.cli.{ParseFailure, CliParser}
+import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
 import tech.olczak.chesschallenge.app.effect._
+
 import scalaz._
-import org.mockito.Matchers.{any, eq => argEq}
-import org.mockito.Mockito._
 
 class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
 
   "A chess challenge app" when {
+
     "starting" should {
       "print greeting" in new TestContext {
-        //given
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
@@ -23,9 +24,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         stdout should contain("Hello, starting chess challenge app...")
       }
     }
-  }
 
-  it when {
     "command line arguments are invalid" should {
       "fail with error code equal 1" in new TestContext {
         //given
@@ -46,6 +45,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
       }
     }
+
   }
 
   trait TestContext {
