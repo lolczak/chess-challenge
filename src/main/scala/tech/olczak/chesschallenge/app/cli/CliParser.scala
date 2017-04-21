@@ -1,12 +1,12 @@
 package tech.olczak.chesschallenge.app.cli
 
-import tech.olczak.chesschallenge.app.ChessProblem
+import tech.olczak.chesschallenge.solver.ChessConfig
 
 import scalaz.\/
 
 trait CliParser {
 
-  def parse(args: List[String]): ParseFailure \/ ChessProblem
+  def parse(args: List[String]): ParseFailure \/ ChessConfig
 
 }
 

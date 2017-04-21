@@ -14,7 +14,7 @@ object BacktrackingSolverBenchmark extends PerformanceTest.Quickbenchmark {
         exec.minWarmupRuns -> 1
       ) in {
       using(chess) in { case (board, pieces) =>
-        val results = BacktrackingSolver.solve(board, pieces)
+        val results = BacktrackingSolver.solve(ChessConfig(board, pieces))
         println(s"Found: ${results.size}")
       }
     }

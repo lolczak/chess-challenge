@@ -6,12 +6,12 @@ import scala.annotation.tailrec
 
 object BacktrackingSolver extends ChessChallengeSolver {
 
-  override def solve(board: Board, pieceGroups: List[(Piece, Int)]): List[Chessboard] = {
-    if (pieceGroups.isEmpty) List.empty
+  override def solve(chessConfig: ChessConfig): List[Chessboard] = {
+    if (chessConfig.pieceGroups.isEmpty) List.empty
     else {
-      val sorted = pieceGroups.sortBy(_._1.dangerRank)
+      val sorted = chessConfig.pieceGroups.sortBy(_._1.dangerRank)
       val (piece, count) = sorted.head
-      loopPieceGroups(sorted.tail, expand(piece, count, Chessboard.empty(board)))
+      loopPieceGroups(sorted.tail, expand(piece, count, Chessboard.empty(chessConfig.board)))
     }
   }
 

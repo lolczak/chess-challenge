@@ -4,6 +4,7 @@ import tech.olczak.chesschallenge.app.cli.ParseFailure
 import tech.olczak.chesschallenge.app.effect.ConsoleIO._
 import tech.olczak.chesschallenge.app.effect.SystemIO._
 import tech.olczak.chesschallenge.app.effect.{ConsoleIO, SystemIO}
+import tech.olczak.chesschallenge.solver.ChessConfig
 
 import scalaz._
 
@@ -17,17 +18,17 @@ object ChessChallengeApp {
       _ <- env.cliParser.parse(env.args) match {
         case -\/(failure) =>
           handleParseFailure(failure)
-        case \/-(ChessProblem(board, pieces)) =>
+        case \/-(chessConfig) =>
           for {
-            _         <- printLine[IO](s"Looking solutions for $board and $pieces")
-            solutions =  env.solver.solve(board, pieces)
+            _         <- printLine[IO](s"Looking solutions for ${chessConfig.board} and ${chessConfig.pieceGroups}")
+            solutions =  env.solver.solve(chessConfig)
             _         <- printLine[IO](s"Found ${solutions.size} solutions.")
           } yield ()
        }
     } yield ()
   }
 
-  private def solveChessProblem(problem: ChessProblem) = ???
+  private def solveChessProblem(problem: ChessConfig) = ???
 
   private def handleParseFailure(failure: ParseFailure) =
     for {

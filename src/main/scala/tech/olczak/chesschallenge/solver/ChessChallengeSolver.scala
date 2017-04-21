@@ -1,9 +1,9 @@
 package tech.olczak.chesschallenge.solver
 
-import tech.olczak.chesschallenge.chess.{Chessboard, Board, Piece}
+import tech.olczak.chesschallenge.chess.Chessboard
 
 trait ChessChallengeSolver {
 
-  def solve(board: Board, pieces: List[(Piece, Int)]): List[Chessboard]
+  def solve(chessConfig: ChessConfig): List[Chessboard]
 
 }
