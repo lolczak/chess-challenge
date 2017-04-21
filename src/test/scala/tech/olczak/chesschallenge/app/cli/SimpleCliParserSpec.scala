@@ -26,4 +26,11 @@ class SimpleCliParserSpec extends FlatSpec with Matchers {
     SimpleCliParser.parse(List("3", "122a", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
   }
 
+  it should "fail when piece group is incorrect" in {
+    SimpleCliParser.parse(List("4", "4", "K")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("5", "5", "Q")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", "7", "2K")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", "8", "3243")) should matchPattern { case -\/(ParseFailure(_)) => }
+  }
+
 }
