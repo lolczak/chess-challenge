@@ -16,14 +16,22 @@ object SimpleCliParser extends CliParser {
     if (args.size < 3) -\/(ParseFailure("Too less arguments"))
     else {
       val (rankStr :: fileStr :: pieces) = args
-      val rank = fromTryCatchNonFatal(rankStr.toInt).leftMap(_ => "Rank count is not a number").toValidationNel
-      val file = fromTryCatchNonFatal(fileStr.toInt).leftMap(_ => "File count is not a number").toValidationNel
+      val board = parseBoard(rankStr, fileStr)
       val groups = pieces.traverseU(parsePiece)
-      val board = (rank ⊛ file) { Board(_, _) }
       val config = (board ⊛ groups) { ChessConfig(_, _) }
       config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
     }
   }
+
+  def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
+    val rank = parseInt(rankStr) leftMap (_ => "Rank count is not a number") toValidationNel
+    val file = parseInt(fileStr) leftMap (_ => "File count is not a number") toValidationNel
+
+    (rank ⊛ file) { Board(_, _) }
+  }
+
+  private def parseInt(str: String): ValidationNel[Throwable, Int] =
+    fromTryCatchNonFatal(str.toInt).toValidationNel
 
   private def parsePiece(pieceStr: String): ValidationNel[String, (Piece, Int)] =
     pieceStr match {
