@@ -14,10 +14,9 @@ object SimpleCliParser extends CliParser {
 
   override def parse(args: List[String]): ParseFailure \/ ChessConfig =
     args match {
-      case rankStr :: fileStr :: pieces => parseConfig(rankStr, fileStr, pieces)
-      case _                            => ParseFailure("Too less arguments").left
+      case rank :: file :: pieces => parseConfig(rank, file, pieces)
+      case _                      => ParseFailure("Too less arguments").left
     }
-
 
   private def parseConfig(rankStr: String, fileStr: String, pieces: List[String]): ParseFailure \/ ChessConfig = {
     val board = parseBoard(rankStr, fileStr)
@@ -27,9 +26,8 @@ object SimpleCliParser extends CliParser {
   }
 
   private def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
-    val rank = parseInt(rankStr) leftMap (_ => "Rank count is not a number") toValidationNel
-    val file = parseInt(fileStr) leftMap (_ => "File count is not a number") toValidationNel
-
+    val rank = parseInt(rankStr).leftMap(_ => "Rank count is not a number").toValidationNel
+    val file = parseInt(fileStr).leftMap(_ => "File count is not a number").toValidationNel
     (rank ⊛ file)(Board.apply)
   }
 
@@ -39,7 +37,7 @@ object SimpleCliParser extends CliParser {
   private def parsePiece(pieceStr: String): ValidationNel[String, (Piece, Int)] =
     pieceStr match {
       case PieceRegEx(symbol, count) => (parseSymbol(symbol) ⊛ parseInt(count)).tupled
-      case _ => s"Wrong format of piece group: $pieceStr".failureNel
+      case _                         => s"Wrong format of piece group: $pieceStr".failureNel
     }
 
   private val parseSymbol: String => ValidationNel[String, Piece] = {
@@ -48,7 +46,7 @@ object SimpleCliParser extends CliParser {
     case "B"    => Bishop.successNel
     case "R"    => Rook.successNel
     case "N"    => Knight.successNel
-    case symbol => s"Unknown piece symbol $symbol".failureNel
+    case symbol => s"Unknown piece symbol: $symbol".failureNel
   }
 
 }
