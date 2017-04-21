@@ -18,4 +18,17 @@ package object effect {
       }
   }
 
+  /*
+      Free monad doesn't have filter function. This function is needed for pattern matching in for comprehension.
+   */
+  implicit class FreeFilter[S[_], A](free: Free[S, A]) {
+
+    def filter(f: A => Boolean): Free[S, A] =
+      free flatMap { item =>
+        if (f(item)) free
+        else throw new RuntimeException
+      }
+
+  }
+
 }
