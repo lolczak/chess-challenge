@@ -37,16 +37,21 @@ object Chessboard {
 
     val EmptySquare = "_"
     val Separator = " "
-    val EndOfFile = "\n"
+    val EndOfRank = "\n"
 
     override def show(chessboard: Chessboard): Cord = {
       chessboard.board.allSquares.foldLeft(Cord.empty) {
-        case (cords, Square(rank, file)) =>
-          if (file == chessboard.board.fileCount - 1) cords :+ Separator :+ EmptySquare :+ EndOfFile
-          else if (file == 0) cords :+ EmptySquare
-          else cords :+ Separator :+ EmptySquare
+        case (cords, s@Square(rank, file)) =>
+          val symbol = chessboard.placements
+            .find(_.square == s)
+            .map(_.piece.symbol)
+            .getOrElse(EmptySquare)
+          if (file == chessboard.board.fileCount - 1) cords :+ Separator :+ symbol :+ EndOfRank
+          else if (file == 0) cords :+ symbol
+          else cords :+ Separator :+ symbol
       }
     }
+
   }
 
 }
