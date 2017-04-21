@@ -28,9 +28,6 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
 
 object Chessboard {
 
-  def apply(board: Board, placements: Set[Placement]): Chessboard =
-    placements.foldLeft(Chessboard.empty(board)) { case (chessboard, placement) => chessboard.placePiece(placement) }
-
   def empty(board: Board) = Chessboard(board, List.empty, board.allSquares)
 
   implicit val chessboardShow = new Show[Chessboard] {
