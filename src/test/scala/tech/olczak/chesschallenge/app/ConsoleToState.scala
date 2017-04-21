@@ -1,6 +1,6 @@
 package tech.olczak.chesschallenge.app
 
-import tech.olczak.chesschallenge.app.effect.{Exit, SystemIO, ConsoleIO, PrintLine}
+import tech.olczak.chesschallenge.app.effect._
 
 import scala.language.higherKinds
 import scalaz._
@@ -9,7 +9,8 @@ object ConsoleToState extends (ConsoleIO ~> TestState) {
 
   override def apply[A](in: ConsoleIO[A]): State[Buffer, A] =
     in match {
-      case PrintLine(msg, next) => State[Buffer, A](buf => (buf.copy(stdout = msg :: buf.stdout), next))
+      case PrintLine(msg, next)  => State[Buffer, A](buf => (buf.copy(stdout = msg :: buf.stdout), next))
+      case PrintError(msg, next) => State[Buffer, A](buf => (buf.copy(stderr = msg :: buf.stderr), next))
     }
 
 
@@ -25,5 +26,6 @@ object SystemToState extends (SystemIO ~> TestState) {
 }
 
 case class Buffer(stdout: List[String] = List.empty,
+                  stderr: List[String] = List.empty,
                   exitCode: Option[Int] = None
                  )

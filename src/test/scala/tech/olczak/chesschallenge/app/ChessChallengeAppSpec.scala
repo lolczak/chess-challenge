@@ -27,7 +27,16 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
         run(mainCmd)
         //then
         errorCode shouldBe 1
+      }
 
+      "print error message" in new TestContext {
+        //given
+        override lazy val env = Environment(List.empty)
+        //when
+        run(mainCmd)
+        //then
+        stderr should contain("Invalid arguments.")
+        stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
       }
     }
   }
@@ -45,6 +54,8 @@ class ChessChallengeAppSpec extends WordSpec with Matchers {
     }
 
     def stdout: List[String] = buffer.stdout.reverse
+
+    def stderr: List[String] = buffer.stderr.reverse
 
     def errorCode: Int = buffer.exitCode.getOrElse(0)
 

@@ -13,6 +13,8 @@ object ChessChallengeApp {
   val mainCmd = ReaderT[Free[IO, ?], Environment, Unit] { env: Environment =>
     for {
       _ <- printLine[IO]("Hello, starting chess challenge app...")
+      _ <- printError[IO]("Invalid arguments.")
+      _ <- printError[IO]("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
       _ <- exit[IO](1)
     } yield ()
   }
