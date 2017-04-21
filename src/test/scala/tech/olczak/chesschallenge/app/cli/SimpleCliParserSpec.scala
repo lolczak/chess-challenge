@@ -19,4 +19,11 @@ class SimpleCliParserSpec extends FlatSpec with Matchers {
     SimpleCliParser.parse(List("122a", "3", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
   }
 
+  it should "fail when file count is not number" in {
+    SimpleCliParser.parse(List("4", "a", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("5", "##@", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", ":", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+    SimpleCliParser.parse(List("3", "122a", "K2")) should matchPattern { case -\/(ParseFailure(_)) => }
+  }
+
 }

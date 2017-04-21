@@ -13,8 +13,10 @@ object SimpleCliParser extends CliParser {
     if (args.size < 3) -\/(ParseFailure("Too less arguments"))
     else {
       val (rankStr :: fileStr :: pieces) = args
-      val rank = fromTryCatchNonFatal(rankStr.toInt).leftMap(_ => "Rank count is not a number")
-      (rank map { (rank: Int) => ChessConfig(Board(rank, 3), List.empty) }).leftMap(ParseFailure).disjunction
+      val rank = fromTryCatchNonFatal(rankStr.toInt).leftMap(_ => "Rank count is not a number").toValidationNel
+      val file = fromTryCatchNonFatal(fileStr.toInt).leftMap(_ => "File count is not a number").toValidationNel
+      val config = (rank ⊛ file) { (rank, file) => ChessConfig(Board(rank, file), List.empty) }
+      config leftMap(errors => ParseFailure(errors.toList.mkString(", "))) disjunction
     }
   }
 
