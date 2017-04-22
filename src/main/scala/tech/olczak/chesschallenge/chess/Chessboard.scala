@@ -40,9 +40,9 @@ object Chessboard {
 
     override def show(chessboard: Chessboard): Cord = {
       chessboard.board.allSquares.foldLeft(Cord.empty) {
-        case (cords, s@Square(rank, file)) =>
+        case (cords, currentSquare@Square(rank, file)) =>
           val symbol = chessboard.placements
-            .find(_.square == s)
+            .find(_.square == currentSquare)
             .map(_.piece.symbol)
             .getOrElse(EmptySquare)
 

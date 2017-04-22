@@ -2,6 +2,7 @@ package tech.olczak.chesschallenge.app.effect
 
 import scala.language.higherKinds
 import scalaz._
+import scalaz.effect.IO
 
 sealed trait SystemIO[A]
 final case class Exit[A](status: Int, next: A) extends SystemIO[A]
@@ -26,17 +27,15 @@ object SystemIO {
 
 }
 
-object RealSystem extends (SystemIO ~> Id.Id) {
-  import Id._
-  import scalaz.syntax.monad._
+object RealSystem extends (SystemIO ~> IO) {
 
-  override def apply[A](in: SystemIO[A]): Id.Id[A] =
+  override def apply[A](in: SystemIO[A]): IO[A] =
     in match {
       case Exit(status, next)     =>
-        System.exit(status)
-        next.point[Id]
+        IO { System.exit(status) } map (_ => next)
 
       case GetCurrentMillis(next) =>
-        next(System.currentTimeMillis())
+        IO { System.currentTimeMillis() } map next
     }
+
 }

@@ -42,4 +42,4 @@ fork in run := true
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-javaOptions in run ++= Seq("-Xms6g", "-Xmx8g", "-Xss400m", "-XX:MaxNewSize=4g", "-XX:+UseParallelGC", "-XX:+UseParallelOldGC", "-XX:MaxNewSize=3g")
+javaOptions in run ++= Seq("-Xms6g", "-Xmx8g", "-XX:MaxNewSize=4g", "-XX:+UseParallelGC", "-XX:+UseParallelOldGC", "-XX:MaxNewSize=3g")

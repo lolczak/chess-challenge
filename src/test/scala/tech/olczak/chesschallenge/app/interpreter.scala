@@ -20,7 +20,6 @@ object interpreter {
           State[RuntimeState, A](rs => (rs.copy(stderr = msg :: rs.stderr), next))
       }
 
-
   }
 
   object SystemToState extends (SystemIO ~> TestState) {

@@ -10,8 +10,12 @@ object ChessChallengeRunner extends App {
 
   val prodEnv = Environment(args.toList, SimpleCliParser, BacktrackingSolver)
 
-  def unsafeRun[A](action: Action[A]): A = action.run(prodEnv).foldMap(RealConsole or RealSystem)
+  def exec[A](action: Action[A]): A =
+    action
+      .run(prodEnv)
+      .foldMap(RealConsole or RealSystem)
+      .unsafePerformIO()
 
-  unsafeRun(mainAction)
+  exec(solverAction)
 
 }
