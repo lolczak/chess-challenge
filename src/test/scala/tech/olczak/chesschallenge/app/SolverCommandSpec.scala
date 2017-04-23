@@ -7,6 +7,8 @@ import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.ChessObjectMother._
 import tech.olczak.chesschallenge.app.Commands.{Effect, solverCmd}
 import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
+import tech.olczak.chesschallenge.app.constant.Constants._
+import tech.olczak.chesschallenge.app.constant.Messages._
 import tech.olczak.chesschallenge.app.effect._
 import tech.olczak.chesschallenge.app.interpreter.{ConsoleToState, RuntimeState, SystemToState}
 import tech.olczak.chesschallenge.solver.ChessChallengeSolver
@@ -24,7 +26,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.stdout should contain("Hello, starting chess challenge app...")
+        runtime.stdout should contain(GreetingMsg)
       }
     }
 
@@ -35,7 +37,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.maybeExitCode shouldBe Some(1)
+        runtime.maybeExitCode shouldBe Some(FailureExitCode)
       }
 
       "print error message" in new TestContext {
@@ -44,8 +46,8 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.stderr should contain("Invalid arguments: rank count missing")
-        runtime.stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
+        runtime.stderr should contain (InvalidArgumentsMsg format "rank count missing")
+        runtime.stderr should contain (UsageMsg)
       }
     }
 
@@ -58,7 +60,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.stdout should contain("Found 4 solutions.")
+        runtime.stdout should contain (FoundSolutionsMsg format 4)
       }
 
       "print the time the solver took to find all solutions" in new TestContext {
@@ -68,7 +70,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.stdout should contain(s"Elapsed time: ${TestClockTick / 1000} sec and ${TestClockTick % 1000} millis.")
+        runtime.stdout should contain (ElapsedTimeMsg format (ExpectedSeconds, ExpectedMillis))
       }
 
       "list all solutions to the console" in new TestContext {
@@ -105,6 +107,10 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
   trait TestContext {
 
     val TestClockTick = 20234l
+
+    val ExpectedSeconds = TestClockTick / MillisInSecond
+
+    val ExpectedMillis = TestClockTick % MillisInSecond
 
     val cliParser = mock[CliParser]
 
