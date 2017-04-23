@@ -13,13 +13,13 @@ import scala.concurrent.duration.Duration
 import scalaz.Scalaz._
 import scalaz._
 
-object ChessChallengeApp {
+object Commands {
 
   type Effect[A] = Coproduct[ConsoleIO, SystemIO, A]
 
-  type Action[A] = ReaderT[Free[Effect, ?], Environment, A]
+  type Cmd[A] = ReaderT[Free[Effect, ?], Environment, A]
 
-  val solverAction = ReaderT[Free[Effect, ?], Environment, Unit] { env: Environment =>
+  val solverCmd = ReaderT[Free[Effect, ?], Environment, Unit] { env: Environment =>
     for {
       _ <- printLine[Effect]("Hello, starting chess challenge app...")
       _ <- env.cliParser.parse(env.args) fold (handleParseFailure, solve(_).run(env))

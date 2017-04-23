@@ -34,7 +34,7 @@ publishArtifact in Test := false
 
 pomIncludeRepository := { _ => false }
 
-mainClass in (Compile,run) := Some("tech.olczak.chesschallenge.ChessChallengeRunner")
+mainClass in (Compile,run) := Some("tech.olczak.chesschallenge.ChessChallengeApp")
 
 scalacOptions ++= Seq("-optimise", "-target:jvm-1.8")
 

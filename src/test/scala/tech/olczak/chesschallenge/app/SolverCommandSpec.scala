@@ -5,7 +5,7 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.ChessObjectMother._
-import tech.olczak.chesschallenge.app.ChessChallengeApp.{Effect, solverAction}
+import tech.olczak.chesschallenge.app.Commands.{Effect, solverCmd}
 import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
 import tech.olczak.chesschallenge.app.effect._
 import tech.olczak.chesschallenge.app.interpreter.{ConsoleToState, RuntimeState, SystemToState}
@@ -13,16 +13,16 @@ import tech.olczak.chesschallenge.solver.ChessChallengeSolver
 
 import scalaz._
 
-class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
+class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
 
-  "A chess challenge app" when {
+  "A solver command" when {
 
     "starting" should {
       "print greeting" in new TestContext {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.stdout should contain("Hello, starting chess challenge app...")
       }
@@ -33,7 +33,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.maybeExitCode shouldBe Some(1)
       }
@@ -42,7 +42,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         //given
         when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.stderr should contain("Invalid arguments: rank count missing")
         runtime.stderr should contain("Usage: sbt \"run [ranks] [files] [<piece symbol><piece count>...]\"")
@@ -56,7 +56,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.stdout should contain("Found 4 solutions.")
       }
@@ -66,7 +66,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.stdout should contain(s"Elapsed time: ${TestClockTick / 1000} sec and ${TestClockTick % 1000} millis.")
       }
@@ -76,7 +76,7 @@ class ChessChallengeAppSpec extends WordSpec with Matchers with MockitoSugar {
         when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
-        val runtime = run(solverAction)
+        val runtime = run(solverCmd)
         //then
         runtime.stdout should contain allOf(
           """K _ K
