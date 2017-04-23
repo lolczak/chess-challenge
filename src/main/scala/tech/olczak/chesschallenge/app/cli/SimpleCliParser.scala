@@ -1,5 +1,6 @@
 package tech.olczak.chesschallenge.app.cli
 
+import tech.olczak.chesschallenge.app.constant.Constants._
 import tech.olczak.chesschallenge.chess._
 import tech.olczak.chesschallenge.solver.ChessConfig
 
@@ -10,7 +11,7 @@ import scalaz._
 
 object SimpleCliParser extends CliParser {
 
-  val PieceRegEx = """([KQRNB])(\d+)""".r
+  val PieceRegEx = s"([$KingSymbol$QueenSymbol$RookSymbol$KnightSymbol$BishopSymbol])(\\d+)".r
 
   override def parse(args: List[String]): ParseFailure \/ ChessConfig =
     args match {
@@ -48,12 +49,12 @@ object SimpleCliParser extends CliParser {
     }
 
   private val parseSymbol: String => ValidationNel[String, Piece] = {
-    case "K"    => King.successNel
-    case "Q"    => Queen.successNel
-    case "B"    => Bishop.successNel
-    case "R"    => Rook.successNel
-    case "N"    => Knight.successNel
-    case symbol => s"Unknown piece symbol: $symbol".failureNel
+    case KingSymbol   => King.successNel
+    case QueenSymbol  => Queen.successNel
+    case BishopSymbol => Bishop.successNel
+    case RookSymbol   => Rook.successNel
+    case KnightSymbol => Knight.successNel
+    case symbol       => s"Unknown piece symbol: $symbol".failureNel
   }
 
 }
