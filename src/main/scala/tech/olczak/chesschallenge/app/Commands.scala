@@ -46,11 +46,13 @@ object Commands {
       duration   = Duration(end - start, TimeUnit.MILLISECONDS)
     } yield (result, duration)
 
-  private def handleParseFailure(failure: ParseFailure) =
+  private def handleParseFailure(failures: NonEmptyList[ParseFailure]) = {
+    val errorsMsg = failures.map(_.shows).toList.mkString(", ")
     for {
-      _ <- printError[Effect](InvalidArgumentsMsg format failure.msg)
+      _ <- printError[Effect](InvalidArgumentsMsg format errorsMsg)
       _ <- printError[Effect](UsageMsg)
       _ <- exit[Effect](FailureExitCode)
     } yield ()
+  }
 
 }

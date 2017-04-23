@@ -14,4 +14,18 @@ object Messages {
 
   val ElapsedTimeMsg = "Elapsed time: %d sec and %d millis."
 
+  val PieceDuplicationMsg = "piece duplication not allowed"
+
+  val InvalidRankCountMsg = "rank count must be a number"
+
+  val InvalidFileCountMsg = "file count must be a number"
+
+  val UnknownPieceMsg = "%s unknown piece symbol"
+
+  val PieceGroupFormatFailureMsg = "wrong format of piece group: %s"
+
+  val NumberExpectedMsg = "%s is not a number"
+
+  val TooLessArgumentsMsg = "minimum 2 arguments expected"
+
 }

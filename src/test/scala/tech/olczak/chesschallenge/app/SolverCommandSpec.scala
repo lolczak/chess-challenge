@@ -6,13 +6,14 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{Matchers, WordSpec}
 import tech.olczak.chesschallenge.ChessObjectMother._
 import tech.olczak.chesschallenge.app.Commands.{Effect, solverCmd}
-import tech.olczak.chesschallenge.app.cli.{CliParser, ParseFailure}
+import tech.olczak.chesschallenge.app.cli.{CliParser, InvalidFileCount, ParseFailure}
 import tech.olczak.chesschallenge.app.constant.Constants._
 import tech.olczak.chesschallenge.app.constant.Messages._
 import tech.olczak.chesschallenge.app.effect._
 import tech.olczak.chesschallenge.app.interpreter.{ConsoleToState, RuntimeState, SystemToState}
 import tech.olczak.chesschallenge.solver.ChessChallengeSolver
 
+import scalaz.Scalaz.{when => _, _}
 import scalaz._
 
 class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
@@ -22,7 +23,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
     "starting" should {
       "print greeting" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
+        when(cliParser.parse(any[List[String]])).thenReturn((InvalidFileCount : ParseFailure).failureNel)
         //when
         val runtime = run(solverCmd)
         //then
@@ -33,7 +34,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
     "command line arguments are invalid" should {
       "fail with error code equal 1" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
+        when(cliParser.parse(any[List[String]])).thenReturn((InvalidFileCount : ParseFailure).failureNel)
         //when
         val runtime = run(solverCmd)
         //then
@@ -42,11 +43,11 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
 
       "print error message" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(-\/(ParseFailure("rank count missing")))
+        when(cliParser.parse(any[List[String]])).thenReturn((InvalidFileCount : ParseFailure).failureNel)
         //when
         val runtime = run(solverCmd)
         //then
-        runtime.stderr should contain (InvalidArgumentsMsg format "rank count missing")
+        runtime.stderr should contain (InvalidArgumentsMsg format InvalidFileCountMsg)
         runtime.stderr should contain (UsageMsg)
       }
     }
@@ -55,7 +56,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
 
       "print the total number of unique arrangements" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
+        when(cliParser.parse(any[List[String]])).thenReturn(TinyChessConfig.successNel[ParseFailure])
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
         val runtime = run(solverCmd)
@@ -65,7 +66,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
 
       "print the time the solver took to find all solutions" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
+        when(cliParser.parse(any[List[String]])).thenReturn(TinyChessConfig.successNel[ParseFailure])
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
         val runtime = run(solverCmd)
@@ -75,7 +76,7 @@ class SolverCommandSpec extends WordSpec with Matchers with MockitoSugar {
 
       "list all solutions to the console" in new TestContext {
         //given
-        when(cliParser.parse(any[List[String]])).thenReturn(\/-(TinyChessConfig))
+        when(cliParser.parse(any[List[String]])).thenReturn(TinyChessConfig.successNel[ParseFailure])
         when(solver.solve(TinyChessConfig)).thenReturn(TinyConfigSolutions)
         //when
         val runtime = run(solverCmd)

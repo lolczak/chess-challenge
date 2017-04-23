@@ -13,48 +13,47 @@ object SimpleCliParser extends CliParser {
 
   val PieceRegEx = s"([$KingSymbol$QueenSymbol$RookSymbol$KnightSymbol$BishopSymbol])(\\d+)".r
 
-  override def parse(args: List[String]): ParseFailure \/ ChessConfig =
+  override def parse(args: List[String]): ValidationNel[ParseFailure, ChessConfig] =
     args match {
       case rank :: file :: pieces => parseConfig(rank, file, pieces)
-      case _                      => ParseFailure("Too less arguments").left
+      case _                      => (TooLessArguments : ParseFailure).failureNel
     }
 
-  private def parseConfig(rankStr: String, fileStr: String, pieces: List[String]): ParseFailure \/ ChessConfig = {
-    val board = parseBoard(rankStr, fileStr)
+  private def parseConfig(rank: String, file: String, pieces: List[String]): ValidationNel[ParseFailure, ChessConfig] = {
+    val board = parseBoard(rank, file)
     val groups = parsePieces(pieces)
-    val config = (board ⊛ groups)(ChessConfig.apply)
-    config leftMap (errors => ParseFailure(errors.toList.mkString(", "))) disjunction
+    (board ⊛ groups)(ChessConfig.apply)
   }
 
-  private def parsePieces(symbols: List[String]): ValidationNel[String, List[(Piece, Int)]] = {
-    val pieceGroups = symbols.traverseU(parsePiece)
-    val duplicationFailure = NonEmptyList("There are duplications of pieces")
+  private def parsePieces(symbols: List[String]): ValidationNel[ParseFailure, List[(Piece, Int)]] = {
+    val pieceGroups = symbols traverseU parsePiece
+    val duplicationFailure = NonEmptyList(PieceDuplication : ParseFailure)
     val duplicationTest = (pieces: List[(Piece, Int)]) => pieces.groupBy(_._1).forall { case (_, group) => group.size == 1 }
     pieceGroups.ensure(duplicationFailure)(duplicationTest)
   }
 
-  private def parseBoard(rankStr: String, fileStr: String): ValidationNel[String, Board] = {
-    val rank = parseInt(rankStr).leftMap(_ => "Rank count is not a number").toValidationNel
-    val file = parseInt(fileStr).leftMap(_ => "File count is not a number").toValidationNel
+  private def parseBoard(rankTerm: String, fileTerm: String): ValidationNel[ParseFailure, Board] = {
+    val rank = parseInt(rankTerm).leftMap(_ => InvalidRankCount : ParseFailure).toValidationNel
+    val file = parseInt(fileTerm).leftMap(_ => InvalidFileCount : ParseFailure).toValidationNel
     (rank ⊛ file)(Board.apply)
   }
 
-  private def parseInt(str: String): ValidationNel[String, Int] =
-    fromTryCatchNonFatal(str.toInt).leftMap(_ => s"$str is not a number").toValidationNel
+  private def parseInt(str: String): ValidationNel[ParseFailure, Int] =
+    fromTryCatchNonFatal(str.toInt).leftMap(_ => NumberExpected(str) : ParseFailure).toValidationNel
 
-  private def parsePiece(pieceStr: String): ValidationNel[String, (Piece, Int)] =
+  private def parsePiece(pieceStr: String): ValidationNel[ParseFailure, (Piece, Int)] =
     pieceStr match {
       case PieceRegEx(symbol, count) => (parseSymbol(symbol) ⊛ parseInt(count)).tupled
-      case _                         => s"Wrong format of piece group: $pieceStr".failureNel
+      case _                         => (PieceGroupFormatFailure(pieceStr) : ParseFailure).failureNel
     }
 
-  private val parseSymbol: String => ValidationNel[String, Piece] = {
+  private val parseSymbol: String => ValidationNel[ParseFailure, Piece] = {
     case KingSymbol   => King.successNel
     case QueenSymbol  => Queen.successNel
     case BishopSymbol => Bishop.successNel
     case RookSymbol   => Rook.successNel
     case KnightSymbol => Knight.successNel
-    case symbol       => s"Unknown piece symbol: $symbol".failureNel
+    case symbol       => (UnknownPiece(symbol) : ParseFailure).failureNel
   }
 
 }
