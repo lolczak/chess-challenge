@@ -2,7 +2,7 @@ package tech.olczak.chesschallenge.app.constant
 
 object Messages {
 
-  val GreetingMsg = "Hello, starting chess challenge app..."
+  val GreetingMsg = "Hello!! Starting chess challenge app..."
 
   val InvalidArgumentsMsg = "Invalid arguments: %s"
 

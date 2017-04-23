@@ -36,25 +36,24 @@ object Chessboard {
 
     val Separator = " "
 
-    val EndOfRank = "\n"
+    val EndOfLine = "\n"
 
     override def show(chessboard: Chessboard): Cord = {
-      chessboard.board.allSquares.foldLeft(Cord.empty) {
-        case (cords, currentSquare@Square(rank, file)) =>
-          val symbol = chessboard.placements
-            .find(_.square == currentSquare)
-            .map(_.piece.symbol)
-            .getOrElse(EmptySquare)
+      val LastFile = chessboard.board.fileCount - 1
+      val symbolFor = getSymbolFor(chessboard)(_)
 
-          if (isEndOfRank(file, chessboard)) cords :+ s"$Separator$symbol$EndOfRank"
-          else if (isBeginningOfRank(file)) cords :+ symbol
-          else cords :+ s"$Separator$symbol"
+      chessboard.board.allSquares.foldLeft(Cord.empty) {
+        case (cords, square@Square(_, 0))        => cords :+ symbolFor(square)
+        case (cords, square@Square(_, LastFile)) => cords :+ s"$Separator${symbolFor(square)}$EndOfLine"
+        case (cords, square@Square(rank, file))  => cords :+ s"$Separator${symbolFor(square)}"
       }
     }
 
-    private def isBeginningOfRank(file: Int): Boolean = file == 0
-
-    private def isEndOfRank(file: Int, chessboard: Chessboard): Boolean = file == chessboard.board.fileCount - 1
+    private def getSymbolFor(chessboard: Chessboard)(square: Square) =
+      chessboard.placements
+        .find(_.square == square)
+        .map(_.piece.symbol)
+        .getOrElse(EmptySquare)
 
   }
 
