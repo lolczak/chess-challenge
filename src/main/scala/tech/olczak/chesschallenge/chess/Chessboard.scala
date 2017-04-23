@@ -14,14 +14,26 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
       safeSquares = safeSquares.filter(tested => placement.isSafe(tested) && tested != placement.square))
 
   def findSafeSquares(piece: Piece): List[Square] =
-    safeSquares.filter(tested => placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
+    safeSquares.filter(tested => pieceCannotTakeAnyOther(piece, tested))
 
   def findSafeGreaterSquares(piece: Piece, square: Square): List[Square] =
-    safeSquares.filter(tested => tested > square && placements.forall(placement => !piece.isThreatened(tested)(placement.square)))
+    safeSquares.filter(tested => tested > square && pieceCannotTakeAnyOther(piece, tested))
 
-  override def equals(obj: scala.Any): Boolean = obj match {
-    case Chessboard(otherBoard, otherPlacement, _) => board == otherBoard && placements.toSet == otherPlacement.toSet
-    case _                                         => false
+  private def pieceCannotTakeAnyOther(piece: Piece, tested: Square): Boolean =
+    placements.forall(placement => !piece.isThreatened(tested)(placement.square))
+
+  override def equals(other: scala.Any): Boolean = other match {
+    case Chessboard(otherBoard, otherPlacement, otherSafeSquares) =>
+      board == otherBoard && placements.toSet == otherPlacement.toSet && safeSquares.toSet == otherSafeSquares.toSet
+    case _ =>
+      false
+  }
+
+  override def hashCode(): Int = {
+    var result = board.hashCode()
+    result = 31 * result + placements.toSet.hashCode()
+    result = 31 * result + safeSquares.toSet.hashCode()
+    result
   }
 
 }
