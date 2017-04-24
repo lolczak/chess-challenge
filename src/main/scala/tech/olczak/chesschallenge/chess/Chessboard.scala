@@ -1,6 +1,7 @@
 package tech.olczak.chesschallenge.chess
 
-import scalaz.{Cord, Show}
+import scalaz.Scalaz._
+import scalaz._
 
 /**
   * Represents an arrangement of pieces on a chessboard.
@@ -30,10 +31,9 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
   }
 
   override def hashCode(): Int = {
-    var result = board.hashCode()
-    result = 31 * result + placements.toSet.hashCode()
-    result = 31 * result + safeSquares.toSet.hashCode()
-    result
+    val combine = (31 * (_: Int) + (_: Int)).curried
+
+    board.hashCode() |> combine(placements.toSet.hashCode()) |> combine(safeSquares.toSet.hashCode())
   }
 
 }
