@@ -31,9 +31,9 @@ case class Chessboard(board: Board, placements: List[Placement], safeSquares: Li
   }
 
   override def hashCode(): Int = {
-    val combine = (31 * (_: Int) + (_: Int)).curried
+    val concatHash = (31 * (_: Any).hashCode() + (_: Int)).curried
 
-    board.hashCode() |> combine(placements.toSet.hashCode()) |> combine(safeSquares.toSet.hashCode())
+    board.hashCode() |> concatHash(placements.toSet()) |> concatHash(safeSquares.toSet)
   }
 
 }
