@@ -61,15 +61,18 @@ class PieceSpec extends FlatSpec with Matchers with GeneratorDrivenPropertyCheck
     def isOnBoard(square: Square) =
       square.rank >= 0 && square.rank < TestBoard.rankCount && square.file >= 0 && square.file < TestBoard.fileCount
 
-    val DiagonalRfFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col + 1) }
-    val DiagonalRfFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col - 1) }
-    val DiagonalRbFfMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col + 1) }
-    val DiagonalRbFbMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col - 1) }
+    val DiagonalRfFfMoves = genMoves(1, 1)
+    val DiagonalRfFbMoves = genMoves(1, -1)
+    val DiagonalRbFfMoves = genMoves(-1, 1)
+    val DiagonalRbFbMoves = genMoves(-1, -1)
 
-    val RankForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row + 1, col) }
-    val RankBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row - 1, col) }
-    val FileForwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col + 1) }
-    val FileBackwardMoves = Stream.iterate((0, 0)) { case (row, col) => (row, col - 1) }
+    val RankForwardMoves = genMoves(1, 0)
+    val RankBackwardMoves = genMoves(-1, 0)
+    val FileForwardMoves = genMoves(0, +1)
+    val FileBackwardMoves = genMoves(0, -1)
+
+    def genMoves(rowAdd: Int, colAdd: Int) =
+      Stream.iterate((0, 0)) { case (row, col) => (row + rowAdd, col + colAdd) }
 
   }
 
