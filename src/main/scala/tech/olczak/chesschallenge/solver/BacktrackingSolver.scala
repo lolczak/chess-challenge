@@ -47,7 +47,9 @@ object BacktrackingSolver extends ChessChallengeSolver {
 
   @tailrec
   private def loopSquares(piece: Piece, chessboard: Chessboard, squares: List[Square], candidates: List[(Chessboard, Square)]): List[(Chessboard, Square)] =
-    if (squares.isEmpty) candidates
-    else loopSquares(piece, chessboard, squares.tail, (chessboard.placePiece(piece, squares.head), squares.head) :: candidates)
+    squares match {
+      case Nil          => candidates
+      case head :: tail => loopSquares(piece, chessboard, tail, (chessboard.placePiece(piece, head), head) :: candidates)
+    }
 
 }
